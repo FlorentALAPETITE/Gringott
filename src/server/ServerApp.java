@@ -91,9 +91,6 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 	public static void main(String[] args) {
 		try {
 
-			final String dir = System.getProperty("user.dir");
-			System.out.println("current dir = " + dir);
-
 			String localIp = null;
 
 			try(final DatagramSocket socket = new DatagramSocket()){
@@ -105,7 +102,7 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 				e.printStackTrace();
 			}
 
-			System.setProperty("java.rmi.server.hostname",localIp);
+			System.setProperty("java.rmi.server.hostname","192.168.43.95");
 			System.setProperty("java.security.policy","file:./server.policy");
 
 			if (System.getSecurityManager() == null) {
@@ -117,7 +114,7 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 			Registry reg = LocateRegistry.createRegistry(port);
 			IServer s = new ServerApp(port);
 
-			Naming.bind("rmi://"+localIp+":" + port + "/enchere", s);
+			reg.bind("enchere", s);
 
 			System.out.println("Adresse : localhost:" + port + "/enchere");
 
@@ -134,8 +131,6 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 				}
 			}
 		} catch (RemoteException e) {
-			e.printStackTrace();
-		} catch (MalformedURLException e) {
 			e.printStackTrace();
 		} catch (AlreadyBoundException e) {
 			e.printStackTrace();
