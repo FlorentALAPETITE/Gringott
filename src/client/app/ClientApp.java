@@ -34,7 +34,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient, ActionLis
 		this.items = new ArrayList<Item>();
 		this.view = new ClientFrame(this, this);
 		this.view.setVisible(true);
-		Registry reg = LocateRegistry.getRegistry("192.168.43.95",8090);
+		Registry reg = LocateRegistry.getRegistry("localhost",8090);
 
 		this.server = (IServer) reg.lookup("enchere");
 	}
@@ -83,12 +83,12 @@ public class ClientApp extends UnicastRemoteObject implements IClient, ActionLis
 	}
 
 	@Override
-	public void endSelling(Item item) throws RemoteException {
+	public void endSelling(Item item) {
 		for (Item i : items){
 			if (i.getName().equals(item.getName())){
 				System.out.println("Fin de la vente : " + i.getName());
 				i.setSold(true);
-				this.updateView();
+				this.endSelling(item);
 			}
 		}
 	}
@@ -102,14 +102,19 @@ public class ClientApp extends UnicastRemoteObject implements IClient, ActionLis
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand()) {
 		case "Connexion":
-			try {
-				this.pseudo = this.view.getRegisterPanel().getFieldContent();
-				this.id = this.server.registerClient(this);
-				this.isConnected = true;
-				this.view.setContentPane(view.getTabPanel());
-				this.updateView();
-			} catch (RemoteException e1) {
-				e1.printStackTrace();
+			String pseudoEntry = this.view.getRegisterPanel().getFieldContent();
+			if(pseudoEntry.trim().equalsIgnoreCase("") || pseudoEntry.contains("@")){
+				new JOptionPane().showMessageDialog(null, "Pseudo Invalide", "Erreur", JOptionPane.ERROR_MESSAGE);
+			}else {
+				try {
+					this.pseudo = this.view.getRegisterPanel().getFieldContent();
+					this.id = this.server.registerClient(this);
+					this.isConnected = true;
+					this.view.setContentPane(view.getTabPanel());
+					this.updateView();
+				} catch (RemoteException e1) {
+					e1.printStackTrace();
+				}
 			}
 			break;
 		case "Soumettre":
@@ -127,7 +132,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient, ActionLis
 			try {
 				BidButton source = (BidButton) e.getSource();
 				if (Double.parseDouble(source.getContent()) >= source.getItem().getPrice()*0.2) {
-					this.server.bid(source.getItem(), Double.parseDouble(source.getContent()), this.getPseudo());
+					this.server.bid(source.getItem(), Double.parseDouble(source.getContent()), this.id);
 				} else {
                     new JOptionPane().showMessageDialog(null, "Vous devez enchérir d'au moins 20% du prix courant.", "Information", JOptionPane.INFORMATION_MESSAGE);
 				}
@@ -140,7 +145,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient, ActionLis
 		case "Deconnexion":
 			this.view.setContentPane(view.getRegisterPanel());
 			try {
-				server.logout(this);
+				server.logout(this.id);
 				this.pseudo = null;
 				this.isConnected = false;
 				this.updateView();
@@ -177,7 +182,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient, ActionLis
 		}
 
 		try {
-			String serverURL = "192.168.43.95:8090/enchere";
+			String serverURL = "localhost:8090/enchere";
 
 			ClientApp c = new ClientApp(serverURL);
 			System.out.println("Connexion au serveur " + serverURL + " reussi.");

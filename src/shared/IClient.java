@@ -36,7 +36,7 @@ public interface IClient extends Remote {
 	 * Notify client that an item clock have reached its end.
 	 * @param item the item from which selling has to be ended.
 	 */
-	void endSelling(Item item)  throws RemoteException;
+	void endSelling(Item item) throws RemoteException;
 
 	/**
 	 * Get client's pseudo.
