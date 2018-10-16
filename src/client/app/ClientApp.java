@@ -83,12 +83,12 @@ public class ClientApp extends UnicastRemoteObject implements IClient, ActionLis
 	}
 
 	@Override
-	public void endSelling(Item item) throws RemoteException {
+	public void endSelling(Item item) {
 		for (Item i : items){
 			if (i.getName().equals(item.getName())){
 				System.out.println("Fin de la vente : " + i.getName());
 				i.setSold(true);
-				this.updateView();
+				this.endSelling(item);
 			}
 		}
 	}
