@@ -76,7 +76,7 @@ public class ClientFrame extends JFrame {
 	public void dispose() {
 		try {
 			if (this.client.isConnected()) {
-				this.client.getServer().logout(client);
+				this.client.getServer().logout(client.getId());
 			}
 		} catch (RemoteException e) {
 			// TODO Auto-generated catch block

@@ -49,19 +49,23 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 	}
 	
 	@Override
-	public void logout(IClient client) throws RemoteException {
-		System.out.println(client.getPseudo() + " logged out.");
-		clients.remove(client.getId());
-		System.out.println(clients.size() > 0 ? clients.size()+" clients still connected." : "No more clients connected.");
+	public void logout(int clientId) throws RemoteException {
+		if(clients.containsKey(clientId)) {
+			System.out.println(clients.get(clientId).getPseudo() + " logged out.");
+			clients.remove(clientId);
+			System.out.println(clients.size() > 0 ? clients.size()+" clients still connected." : "No more clients connected.");
+		}else {
+			System.out.println("There is no such client with ID : "+clientId);
+		}
 	}
 
 	@Override
-	public void bid(Item item, double newPrice, String buyer) throws RemoteException {
+	public void bid(Item item, double newPrice, int bidderId) throws RemoteException {
 
-		double price = monitor.updateBid(item, newPrice, buyer, items, dbManager);
+		double price = monitor.updateBid(item, newPrice, clients.get(bidderId).getPseudo(), items, dbManager);
 		
 		for (IClient c : clients.values()) {
-			c.update(item, price, buyer);
+			c.update(item, price, clients.get(bidderId).getPseudo());
 		}
 	}
 

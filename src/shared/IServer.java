@@ -22,7 +22,7 @@ public interface IServer extends Remote, Serializable {
 	 * @param client the client to log out.
 	 * @throws RemoteException
 	 */
-	void logout(IClient client) throws RemoteException;
+	void logout(int clientId) throws RemoteException;
 	
 	/**
 	 * Record a new bid from a a client for an item.
@@ -31,7 +31,7 @@ public interface IServer extends Remote, Serializable {
 	 * @param buyer the client.
 	 * @throws RemoteException
 	 */
-	void bid(Item item, double newPrice, String buyer)  throws RemoteException;
+	void bid(Item item, double newPrice, int bidderId)  throws RemoteException;
 	
 	/**
 	 * Record a new Item.
