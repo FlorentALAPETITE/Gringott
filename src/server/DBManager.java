@@ -1,5 +1,6 @@
 package server;
 
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -23,36 +24,26 @@ public class DBManager {
 	private BufferedWriter jsonWritter;
 	private JsonObject root;
 	private Gson gson;
+	private ServerApp server;
 
-	public DBManager(boolean recreate) {
-		if (recreate) {
-			Path file = Paths.get(dbPath);
-			try {
-				if (Files.exists(file)){
-					Files.delete(file);
-				}
-				this.jsonWritter = Files.newBufferedWriter(file, StandardOpenOption.CREATE);
-				jsonWritter.write("{\n\"items\": []\n}");
-				jsonWritter.flush();
-				this.jsonReader = new BufferedReader(new FileReader(dbPath));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			try {
-				this.jsonReader = new BufferedReader(new FileReader(dbPath));
-			} catch (FileNotFoundException e1) {
-				Path file = Paths.get(dbPath);
-				try {
-					this.jsonWritter = Files.newBufferedWriter(file, StandardOpenOption.CREATE);
-					jsonWritter.write("{\n\"items\": []\n}");
-					jsonWritter.flush();
-					this.jsonReader = new BufferedReader(new FileReader(dbPath));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+	public DBManager(ServerApp server) {
+	    this.server = server;
+	    // read the existing db
+
+        try {
+            this.jsonReader = new BufferedReader(new FileReader(dbPath));
+        } catch (FileNotFoundException e1) {
+            Path file = Paths.get(dbPath);
+            try {
+                this.jsonWritter = Files.newBufferedWriter(file, StandardOpenOption.CREATE);
+                jsonWritter.write("{\n\"items\": []\n}");
+                jsonWritter.flush();
+                this.jsonReader = new BufferedReader(new FileReader(dbPath));
+                } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
 		this.gson = new Gson();
 		JsonParser parser = new JsonParser();
 		this.root = parser.parse(this.jsonReader).getAsJsonObject();
