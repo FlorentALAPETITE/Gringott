@@ -102,14 +102,19 @@ public class ClientApp extends UnicastRemoteObject implements IClient, ActionLis
 	public void actionPerformed(ActionEvent e) {
 		switch (e.getActionCommand()) {
 		case "Connexion":
-			try {
-				this.pseudo = this.view.getRegisterPanel().getFieldContent();
-				this.id = this.server.registerClient(this);
-				this.isConnected = true;
-				this.view.setContentPane(view.getTabPanel());
-				this.updateView();
-			} catch (RemoteException e1) {
-				e1.printStackTrace();
+			String pseudoEntry = this.view.getRegisterPanel().getFieldContent();
+			if(pseudoEntry.trim().equalsIgnoreCase("") || pseudoEntry.contains("@")){
+				new JOptionPane().showMessageDialog(null, "Pseudo Invalide", "Erreur", JOptionPane.ERROR_MESSAGE);
+			}else {
+				try {
+					this.pseudo = this.view.getRegisterPanel().getFieldContent();
+					this.id = this.server.registerClient(this);
+					this.isConnected = true;
+					this.view.setContentPane(view.getTabPanel());
+					this.updateView();
+				} catch (RemoteException e1) {
+					e1.printStackTrace();
+				}
 			}
 			break;
 		case "Soumettre":
