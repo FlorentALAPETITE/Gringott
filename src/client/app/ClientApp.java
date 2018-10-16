@@ -127,7 +127,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient, ActionLis
 			try {
 				BidButton source = (BidButton) e.getSource();
 				if (Double.parseDouble(source.getContent()) >= source.getItem().getPrice()*0.2) {
-					this.server.bid(source.getItem(), Double.parseDouble(source.getContent()), this.id);
+					this.server.bid(source.getItem(), Math.ceil(Double.parseDouble(source.getContent())), this.id);
 				} else {
                     new JOptionPane().showMessageDialog(null, "Vous devez enchérir d'au moins 20% du prix courant.", "Information", JOptionPane.INFORMATION_MESSAGE);
 				}
