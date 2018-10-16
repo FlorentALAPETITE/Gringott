@@ -1,9 +1,8 @@
 package client.view;
 
-import javax.swing.JButton;
-import javax.swing.JTextArea;
-
 import shared.Item;
+
+import javax.swing.*;
 
 public class BidButton extends JButton {
 

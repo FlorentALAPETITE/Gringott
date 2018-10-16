@@ -1,12 +1,12 @@
 package shared;
 
+import server.DBManager;
+
 import java.io.Serializable;
 import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
-
-import server.DBManager;
 
 public interface IServer extends Remote, Serializable {
 

@@ -1,20 +1,13 @@
 package client.view;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.Insets;
-import java.awt.event.ActionListener;
-import java.rmi.RemoteException;
-
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextField;
-
 import shared.IClient;
 import shared.Item;
 import shared.SellableItem;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
 
 public class SubmitPanel extends JPanel {
 

@@ -1,24 +1,13 @@
 package client.view;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionListener;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-
 import shared.IClient;
 import shared.Item;
-import shared.SellableItem;
+
+import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionListener;
+import java.rmi.RemoteException;
+import java.util.List;
 
 public class BidsPanel extends JPanel {
 

@@ -1,14 +1,11 @@
 package client.view;
 
-import java.awt.Container;
+import shared.IClient;
+
+import javax.swing.*;
+import java.awt.*;
 import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
-
-import javax.swing.JFrame;
-import javax.swing.JScrollPane;
-import javax.swing.JTabbedPane;
-
-import shared.IClient;
 
 public class ClientFrame extends JFrame {
 
