@@ -34,9 +34,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient, ActionLis
 		this.items = new ArrayList<Item>();
 		this.view = new ClientFrame(this, this);
 		this.view.setVisible(true);
-		Registry reg = LocateRegistry.getRegistry("localhost",8090);
-
-		this.server = (IServer) reg.lookup("enchere");
+		this.server = (IServer) Naming.lookup("//localhost:8090/enchere");
 	}
 
 	public void updateView() throws RemoteException {
@@ -174,16 +172,8 @@ public class ClientApp extends UnicastRemoteObject implements IClient, ActionLis
 	}
 
 	public static void main(String[] args) {
-
-		System.setProperty("java.security.policy","file:./server.policy");
-
-		if (System.getSecurityManager() == null) {
-			System.setSecurityManager(new RMISecurityManager());
-		}
-
 		try {
 			String serverURL = "localhost:8090/enchere";
-
 			ClientApp c = new ClientApp(serverURL);
 			System.out.println("Connexion au serveur " + serverURL + " reussi.");
 		} catch (RemoteException e) {

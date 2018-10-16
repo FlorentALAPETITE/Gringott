@@ -30,8 +30,7 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 	private HashMap<Integer, IClient> clients;
 	private List<Item> items;
 
-	public ServerApp(int port) throws RemoteException, FileNotFoundException {
-		super(port);
+	public ServerApp() throws RemoteException, FileNotFoundException {
 		this.dbManager = new DBManager(true);
 		this.clients = new HashMap<Integer, IClient>();
 		this.items = this.dbManager.listItems();
@@ -111,33 +110,10 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 	public static void main(String[] args) {
 		try {
 
-			final String dir = System.getProperty("user.dir");
-			System.out.println("current dir = " + dir);
-
-			String localIp = null;
-
-			try(final DatagramSocket socket = new DatagramSocket()){
-				socket.connect(InetAddress.getByName("8.8.8.8"), 10002);
-				localIp = socket.getLocalAddress().getHostAddress();
-			} catch (SocketException e) {
-				e.printStackTrace();
-			} catch (UnknownHostException e) {
-				e.printStackTrace();
-			}
-
-			System.setProperty("java.rmi.server.hostname",localIp);
-			System.setProperty("java.security.policy","file:./server.policy");
-
-			if (System.getSecurityManager() == null) {
-				System.setSecurityManager(new RMISecurityManager());
-			}
-
-
 			int port = 8090;
-			Registry reg = LocateRegistry.createRegistry(port);
-			IServer s = new ServerApp(port);
-
-			Naming.bind("rmi://"+localIp+":" + port + "/enchere", s);
+			LocateRegistry.createRegistry(port);
+			IServer s = new ServerApp();
+			Naming.bind("//localhost:" + port + "/enchere", s);
 
 			System.out.println("Adresse : localhost:" + port + "/enchere");
 
