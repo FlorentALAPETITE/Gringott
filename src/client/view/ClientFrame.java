@@ -1,7 +1,6 @@
 package client.view;
 
 import client.app.ClientApp;
-import shared.IClient;
 import shared.Item;
 
 import javax.swing.*;

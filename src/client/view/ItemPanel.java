@@ -12,7 +12,7 @@ public class ItemPanel extends JPanel {
     private JLabel price, name, time;
     private JTextArea jta, descLabel;
 
-    public ItemPanel(Item i, ClientApp client){
+    ItemPanel(Item i, ClientApp client){
         this.setLayout(new GridBagLayout());
 
         name = new JLabel(i.getName());
@@ -129,7 +129,7 @@ public class ItemPanel extends JPanel {
             @Override
             public void run() {
                 try {
-                    this.sleep(500);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }

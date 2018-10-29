@@ -24,16 +24,16 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 	private IServer server;
 
 	public ClientApp(String url) throws MalformedURLException, RemoteException, NotBoundException {
-		this.items = new ArrayList<Item>();
+		this.items = new ArrayList<>();
 		this.view = new ClientFrame(this);
 		this.view.setVisible(true);
-		this.server = (IServer) Naming.lookup("//localhost:8090/enchere");
+		this.server = (IServer) Naming.lookup(url);
 	}
 
 
     //region display
 
-    public void updateView() throws RemoteException {
+    private void updateView() throws RemoteException {
         this.view.rebuild();
         this.view.repaint();
         this.view.revalidate();

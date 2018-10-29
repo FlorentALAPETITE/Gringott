@@ -6,7 +6,6 @@ import shared.Item;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
@@ -16,7 +15,6 @@ public class BidsPanel extends JPanel {
 	private static final long serialVersionUID = 341558991057008262L;
 
     private ClientApp client;
-	private ActionListener controller;
 	private Map<String, Item> items;
 	private Map<String, ItemPanel> itemPanels;
 
@@ -24,8 +22,8 @@ public class BidsPanel extends JPanel {
 		super();
 		this.client = client;
 
-		items = new HashMap<String, Item>();
-		itemPanels = new HashMap<String, ItemPanel>();
+		items = new HashMap<>();
+		itemPanels = new HashMap<>();
 		
 		for (Item i : client.getItems()) {
 			items.put(i.getName(), i); // TODO replace by ID

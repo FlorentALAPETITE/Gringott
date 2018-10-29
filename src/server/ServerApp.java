@@ -26,7 +26,7 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 	private HashMap<Integer, IClient> clients;
 	private List<Item> items;
 
-	public ServerApp() throws RemoteException, FileNotFoundException {
+	ServerApp() throws RemoteException, FileNotFoundException {
 		this.dbManager = new DBManager(true);
 		this.clients = new HashMap<Integer, IClient>();
 		this.items = this.dbManager.listItems();
@@ -120,7 +120,6 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 		} catch (AlreadyBoundException e) {
 			e.printStackTrace();
 		} catch (FileNotFoundException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}

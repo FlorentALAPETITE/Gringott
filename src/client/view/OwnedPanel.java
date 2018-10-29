@@ -8,16 +8,12 @@ import java.awt.*;
 import java.rmi.RemoteException;
 import java.util.List;
 
-public class OwnedPanel extends JPanel {
+class OwnedPanel extends JPanel {
 
-	private IClient client;
-	private List<Item> items;
-
-	public OwnedPanel(IClient client) throws RemoteException {
+	OwnedPanel(IClient client) throws RemoteException {
 		super();
-		this.client = client;
-		
-		items = client.getItems();
+
+		List<Item> items = client.getItems();
 		this.setPreferredSize(new Dimension(800,600));
 
 
