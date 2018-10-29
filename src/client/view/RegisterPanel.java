@@ -1,28 +1,22 @@
 package client.view;
 
-import javax.swing.*;
-import java.awt.event.ActionListener;
+import client.app.ClientApp;
+import client.listeners.ConnectionListener;
 
-public class RegisterPanel extends JPanel {
+import javax.swing.*;
+
+class RegisterPanel extends JPanel {
 	
 	private static final long serialVersionUID = -4854758538004111313L;
-	private ActionListener controller;
-	private JTextField registerField;
-	private JButton registerButton;
 	
-	public RegisterPanel(ActionListener controller) {
-		this.controller = controller;
+	RegisterPanel(ClientApp client) {
 		this.add(new JLabel("Pseudo :"));
-		this.registerField = new JTextField();
-		this.registerField.setColumns(15);
+		JTextField registerField = new JTextField();
+		registerField.setColumns(15);
 		this.add(registerField);
-		this.registerButton = new JButton("Connexion");
+		JButton registerButton = new JButton("Connexion");
 		this.add(registerButton );
-		this.registerButton.addActionListener(this.controller);
-	}
-	
-	public String getFieldContent(){
-		return this.registerField.getText();
+		registerButton.addActionListener(new ConnectionListener(client, registerField));
 	}
 	
 }

@@ -1,35 +1,31 @@
 package client.view;
 
-import shared.IClient;
+import client.app.ClientApp;
 import shared.Item;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 
 public class ClientFrame extends JFrame {
 
 	private static final long serialVersionUID = 6994145468596380654L;
-	private IClient client;
+	private ClientApp client;
 	private BidsPanel bidsPanel;
 	private OwnedPanel ownedPanel;
 	private JTabbedPane tabPanel;
 	private RegisterPanel registerPanel;
 	private SubmitPanel submitPanel;
-	private ActionListener controller;
 	
-	public ClientFrame(IClient client, ActionListener controller) throws RemoteException {
+	public ClientFrame(ClientApp client) throws RemoteException {
 		super();
 		this.client = client;
-		this.controller = controller;
-		registerPanel = new RegisterPanel(controller);
-
-		this.bidsPanel = new BidsPanel(client, controller);
+		registerPanel = new RegisterPanel(client);
+		this.bidsPanel = new BidsPanel(client);
 		JScrollPane bidsScroll = new JScrollPane(bidsPanel);
-		this.ownedPanel = new OwnedPanel(client, controller);
+		this.ownedPanel = new OwnedPanel(client);
 		JScrollPane ownedScroll = new JScrollPane(ownedPanel);
-		this.submitPanel = new SubmitPanel(client, controller);
+		this.submitPanel = new SubmitPanel(client);
 		this.tabPanel = new JTabbedPane();
 		this.tabPanel.addTab("Soummettre un article", submitPanel);
 		this.tabPanel.addTab("Mes achats", ownedScroll);
@@ -38,7 +34,7 @@ public class ClientFrame extends JFrame {
 		
 		
 		this.setTitle("Gringott - Service d'enchère pour sorciers");
-		this.setSize(800,600);
+		this.setSize(900,600);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.add(tabPanel);
@@ -61,9 +57,9 @@ public class ClientFrame extends JFrame {
 	public void rebuild() throws RemoteException {
 		this.tabPanel.remove(1);
 		this.tabPanel.remove(1);
-		this.bidsPanel = new BidsPanel(this.client, this.controller);
+		this.bidsPanel = new BidsPanel(this.client);
 		JScrollPane bidsScroll = new JScrollPane(bidsPanel);
-		this.ownedPanel = new OwnedPanel(this.client, this.controller);
+		this.ownedPanel = new OwnedPanel(this.client);
 		JScrollPane ownedScroll = new JScrollPane(ownedPanel);
 		this.tabPanel.add("Mes achats", ownedScroll);
 		this.tabPanel.add("Enchères", bidsScroll);
@@ -93,7 +89,6 @@ public class ClientFrame extends JFrame {
 				this.client.getServer().logout(client.getId());
 			}
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		super.dispose();

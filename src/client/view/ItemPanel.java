@@ -1,17 +1,18 @@
 package client.view;
 
+import client.app.ClientApp;
+import client.listeners.BidListener;
 import shared.Item;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 
 public class ItemPanel extends JPanel {
 
     private JLabel price, name, time;
     private JTextArea jta, descLabel;
 
-    public ItemPanel(Item i, ActionListener controller){
+    ItemPanel(Item i, ClientApp client){
         this.setLayout(new GridBagLayout());
 
         name = new JLabel(i.getName());
@@ -64,7 +65,7 @@ public class ItemPanel extends JPanel {
             gbc.gridx = 3;
             gbc.gridy = 1;
             gbc.gridwidth = 2;
-            btnbit.addActionListener(controller);
+            btnbit.addActionListener(new BidListener(client));
             this.add(btnbit, gbc);
         } else {
             price = new JLabel(String.valueOf(i.getPrice()) + " mornilles.");
@@ -128,7 +129,7 @@ public class ItemPanel extends JPanel {
             @Override
             public void run() {
                 try {
-                    this.sleep(500);
+                    Thread.sleep(500);
                 } catch (InterruptedException e) {
                     e.printStackTrace();
                 }
