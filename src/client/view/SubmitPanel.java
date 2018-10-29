@@ -1,29 +1,27 @@
 package client.view;
 
-import shared.IClient;
+import client.app.ClientApp;
+import client.listeners.SubmissionListener;
 import shared.Item;
 import shared.SellableItem;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 
 public class SubmitPanel extends JPanel {
 
 	private static final long serialVersionUID = -7555887340687619434L;
-	private IClient client;
-	private ActionListener controller;
+	private ClientApp client;
 	private JTextField txtItemName;
 	private JTextField txtItemDescription;
 	private JTextField txtItemPrice;
 	private JTextField txtItemTime;
 	private JButton btnItemSubmission;
 
-	public SubmitPanel(IClient client, ActionListener controller) {
+	public SubmitPanel(ClientApp client) {
 		super();
 		this.client = client;
-		this.controller = controller;
 		this.txtItemName = new JTextField();
 		this.txtItemDescription = new JTextField();
 		this.txtItemPrice = new JTextField();
@@ -95,7 +93,7 @@ public class SubmitPanel extends JPanel {
 		// Button for submission
 		gbSubmission.gridx = 2;
 		gbSubmission.gridy = 6;
-		btnItemSubmission.addActionListener(this.controller);
+		btnItemSubmission.addActionListener(new SubmissionListener(client));
 		this.add(btnItemSubmission, gbSubmission);
 	}
 

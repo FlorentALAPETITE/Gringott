@@ -5,20 +5,17 @@ import shared.Item;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionListener;
 import java.rmi.RemoteException;
 import java.util.List;
 
 public class OwnedPanel extends JPanel {
 
-	private ActionListener controller;
 	private IClient client;
 	private List<Item> items;
 
-	public OwnedPanel(IClient client, ActionListener controller) throws RemoteException {
+	public OwnedPanel(IClient client) throws RemoteException {
 		super();
 		this.client = client;
-		this.controller = controller;
 		
 		items = client.getItems();
 		this.setPreferredSize(new Dimension(800,600));

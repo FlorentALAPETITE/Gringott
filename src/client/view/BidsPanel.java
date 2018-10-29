@@ -1,37 +1,25 @@
 package client.view;
 
-import java.awt.Dimension;
-import java.awt.GridBagConstraints;
-import java.awt.GridBagLayout;
-import java.awt.GridLayout;
-import java.awt.Insets;
-import java.awt.event.ActionListener;
-import java.rmi.RemoteException;
-import java.util.ArrayList;
-import java.util.List;
-
-import javax.swing.BoxLayout;
-import javax.swing.JButton;
-import javax.swing.JLabel;
-import javax.swing.JPanel;
-import javax.swing.JTextArea;
-
-import shared.IClient;
+import client.app.ClientApp;
+import client.listeners.BidListener;
+import client.listeners.DisconnectionListener;
 import shared.Item;
-import shared.SellableItem;
+
+import javax.swing.*;
+import java.awt.*;
+import java.rmi.RemoteException;
+import java.util.List;
 
 public class BidsPanel extends JPanel {
 
 	private static final long serialVersionUID = 341558991057008262L;
 
-	private IClient client;
-	private ActionListener controller;
+	private ClientApp client;
 	private List<Item> items;
 
-	public BidsPanel(IClient client, ActionListener controller) throws RemoteException {
+	public BidsPanel(ClientApp client) throws RemoteException {
 		super();
 		this.client = client;
-		this.controller = controller;
 
 		items = client.getItems();
 
@@ -92,7 +80,7 @@ public class BidsPanel extends JPanel {
 					gbc.gridx = 3;
 					gbc.gridy = 1;
 					gbc.gridwidth = 2;
-					btnbit.addActionListener(controller);
+					btnbit.addActionListener(new BidListener(client));
 					itemPanel.add(btnbit, gbc);
 				} else {
 					JLabel price = new JLabel(String.valueOf(i.getPrice()) + " mornilles.");
@@ -143,7 +131,7 @@ public class BidsPanel extends JPanel {
 			}
 		}
 		JButton logout = new JButton("Deconnexion");
-		logout.addActionListener(this.controller);
+		logout.addActionListener(new DisconnectionListener(client));
 		this.add(logout);
 		
 	}
