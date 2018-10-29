@@ -50,7 +50,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 				System.out.println("Mise à jour de l'item : " + i.getName());
 				i.setPrice(newPrice);
 				i.setLeader(buyer);
-				this.updateView();
+				view.updateItemPrice(item,newPrice, buyer);
 			}
 		}
 	}
@@ -137,8 +137,8 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
         if (!contains){
             System.out.println("Nouvel item ajouté : " + item.getName());
             this.items.add(item);
+            view.addNewItemInBidsPanel(item);
         }
-        this.updateView();
     }
 
 	@Override
@@ -174,5 +174,5 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 			e.printStackTrace();
 		}
 	}
-	
+
 }

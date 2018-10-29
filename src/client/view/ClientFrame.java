@@ -1,6 +1,8 @@
 package client.view;
 
 import client.app.ClientApp;
+import shared.IClient;
+import shared.Item;
 
 import javax.swing.*;
 import java.awt.*;
@@ -20,7 +22,6 @@ public class ClientFrame extends JFrame {
 		super();
 		this.client = client;
 		registerPanel = new RegisterPanel(client);
-		
 		this.bidsPanel = new BidsPanel(client);
 		JScrollPane bidsScroll = new JScrollPane(bidsPanel);
 		this.ownedPanel = new OwnedPanel(client);
@@ -65,7 +66,23 @@ public class ClientFrame extends JFrame {
 		this.tabPanel.add("Enchères", bidsScroll);
 		this.tabPanel.setSelectedIndex(2);
 	}
-	
+
+	public void addNewItemInBidsPanel(Item item){
+		try {
+			bidsPanel.addNewItem(item);
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+		bidsPanel.revalidate();
+		bidsPanel.repaint();
+	}
+
+	public void updateItemPrice(Item item, double newPrice, String buyer){
+		bidsPanel.updateBid(item,newPrice, buyer);
+		bidsPanel.revalidate();
+		bidsPanel.repaint();
+	}
+
 	@Override
 	public void dispose() {
 		try {
@@ -73,7 +90,6 @@ public class ClientFrame extends JFrame {
 				this.client.getServer().logout(client.getId());
 			}
 		} catch (RemoteException e) {
-			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 		super.dispose();
