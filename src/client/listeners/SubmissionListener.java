@@ -32,6 +32,7 @@ public class SubmissionListener  implements ActionListener {
 
         if (item.getName().equals("")){
             JOptionPane.showMessageDialog(null, "Merci de mettre un titre.", "Information", JOptionPane.ERROR_MESSAGE);
+            return;
         }
 
         app.submit(item);

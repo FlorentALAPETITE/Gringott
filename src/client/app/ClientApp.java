@@ -61,7 +61,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 			if (i.getName().equals(item.getName())){
 				System.out.println("Fin de la vente : " + i.getName());
 				i.setSold(true);
-				this.endSelling(item);
+				break;
 			}
 		}
 	}
@@ -69,7 +69,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
     public void connect(String validPseudo){
         try {
             pseudo = validPseudo;
-            id = server.registerClient(ClientApp.this);
+            id = server.registerClient(this);
             isConnected = true;
             view.setContentPane(view.getTabPanel());
             updateView();
@@ -160,7 +160,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 
 	public static void main(String[] args) {
 		try {
-			String serverURL = "localhost:8090/enchere";
+			String serverURL = "//localhost:8090/enchere";
 			ClientApp c = new ClientApp(serverURL);
 			System.out.println("Connexion au serveur " + serverURL + " reussi.");
 		} catch (RemoteException e) {
