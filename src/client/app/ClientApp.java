@@ -1,12 +1,10 @@
 package client.app;
 
-import client.view.BidButton;
 import client.view.ClientFrame;
 import shared.IClient;
 import shared.IServer;
 import shared.Item;
 
-import javax.swing.*;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -31,6 +29,17 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 		this.view.setVisible(true);
 		this.server = (IServer) Naming.lookup("//localhost:8090/enchere");
 	}
+
+
+    //region display
+
+    public void updateView() throws RemoteException {
+        this.view.rebuild();
+        this.view.repaint();
+        this.view.revalidate();
+    }
+
+    //endregion
 
     //region client
 
@@ -57,55 +66,30 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 		}
 	}
 
-	//endregion
-
-
-    //region display
-
-    public void updateView() throws RemoteException {
-        this.view.rebuild();
-        this.view.repaint();
-        this.view.revalidate();
-    }
-
-    public void connect(){
-        String pseudoEntry = view.getRegisterPanel().getFieldContent();
-        if(pseudoEntry.trim().equalsIgnoreCase("") || pseudoEntry.contains("@")){
-            new JOptionPane().showMessageDialog(null, "Pseudo Invalide", "Erreur", JOptionPane.ERROR_MESSAGE);
-        }else {
-            try {
-                pseudo = view.getRegisterPanel().getFieldContent();
-                id = server.registerClient(ClientApp.this);
-                isConnected = true;
-                view.setContentPane(view.getTabPanel());
-                updateView();
-            } catch (RemoteException e1) {
-                e1.printStackTrace();
-            }
-        }
-    }
-
-    public void submit(){
-        try{
-            Item item = view.getSubmitPanel().getFieldsContent();
-            server.submit(item);
-            view.getSubmitPanel().clear();
-        } catch (NumberFormatException e1) {
-            JOptionPane.showMessageDialog(null, "Merci de mettre des nombres.", "Information", JOptionPane.ERROR_MESSAGE);
+    public void connect(String validPseudo){
+        try {
+            pseudo = validPseudo;
+            id = server.registerClient(ClientApp.this);
+            isConnected = true;
+            view.setContentPane(view.getTabPanel());
+            updateView();
         } catch (RemoteException e1) {
             e1.printStackTrace();
         }
     }
 
-    public void bid(BidButton source) {
-        try {
-            if (Double.parseDouble(source.getContent()) >= source.getItem().getPrice()*0.2) {
-                server.bid(source.getItem(), Math.ceil(Double.parseDouble(source.getContent())), id);
-            } else {
-                JOptionPane.showMessageDialog(null, "Vous devez enchérir d'au moins 20% du prix courant.", "Information", JOptionPane.INFORMATION_MESSAGE);
-            }
-        } catch (NumberFormatException e1) {
-            JOptionPane.showMessageDialog(null, "Merci de mettre un nombre.", "Information", JOptionPane.INFORMATION_MESSAGE);
+    public void submit(Item item){
+	    try {
+            server.submit(item);
+            view.getSubmitPanel().clear();
+        } catch (RemoteException e){
+	        e.printStackTrace();
+        }
+    }
+
+    public void bid(Item item, Double price) {
+	    try {
+            server.bid(item, price, id);
         } catch (RemoteException e1) {
             e1.printStackTrace();
         }

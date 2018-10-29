@@ -17,16 +17,15 @@ public class SubmitPanel extends JPanel {
 	private JTextField txtItemDescription;
 	private JTextField txtItemPrice;
 	private JTextField txtItemTime;
-	private JButton btnItemSubmission;
 
-	public SubmitPanel(ClientApp client) {
+	SubmitPanel(ClientApp client) {
 		super();
 		this.client = client;
 		this.txtItemName = new JTextField();
 		this.txtItemDescription = new JTextField();
 		this.txtItemPrice = new JTextField();
 		this.txtItemTime = new JTextField();
-		this.btnItemSubmission = new JButton("Soumettre");
+		JButton btnItemSubmission = new JButton("Soumettre");
 
 		this.setLayout(new GridBagLayout());
 
@@ -93,13 +92,12 @@ public class SubmitPanel extends JPanel {
 		// Button for submission
 		gbSubmission.gridx = 2;
 		gbSubmission.gridy = 6;
-		btnItemSubmission.addActionListener(new SubmissionListener(client));
+		btnItemSubmission.addActionListener(new SubmissionListener(client, this));
 		this.add(btnItemSubmission, gbSubmission);
 	}
 
 	public Item getFieldsContent() throws NumberFormatException, RemoteException{
-		Item content = new SellableItem(txtItemName.getText(), txtItemDescription.getText(), Double.parseDouble(txtItemPrice.getText()), client.getPseudo(), Long.parseLong(txtItemTime.getText()));
-		return content;
+		return new SellableItem(txtItemName.getText(), txtItemDescription.getText(), Double.parseDouble(txtItemPrice.getText()), client.getPseudo(), Long.parseLong(txtItemTime.getText()));
 	}
 
 	public void clear() {

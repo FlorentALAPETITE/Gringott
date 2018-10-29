@@ -34,7 +34,7 @@ public class ClientFrame extends JFrame {
 		
 		
 		this.setTitle("Gringott - Service d'enchère pour sorciers");
-		this.setSize(800,600);
+		this.setSize(900,600);
 		this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
 		this.setLocationRelativeTo(null);
 		this.add(tabPanel);

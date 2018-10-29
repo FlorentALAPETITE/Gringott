@@ -5,26 +5,18 @@ import client.listeners.ConnectionListener;
 
 import javax.swing.*;
 
-public class RegisterPanel extends JPanel {
+class RegisterPanel extends JPanel {
 	
 	private static final long serialVersionUID = -4854758538004111313L;
-	private ClientApp client;
-	private JTextField registerField;
-	private JButton registerButton;
 	
-	public RegisterPanel(ClientApp client) {
-		this.client = client;
+	RegisterPanel(ClientApp client) {
 		this.add(new JLabel("Pseudo :"));
-		this.registerField = new JTextField();
-		this.registerField.setColumns(15);
+		JTextField registerField = new JTextField();
+		registerField.setColumns(15);
 		this.add(registerField);
-		this.registerButton = new JButton("Connexion");
+		JButton registerButton = new JButton("Connexion");
 		this.add(registerButton );
-		this.registerButton.addActionListener(new ConnectionListener(client));
-	}
-	
-	public String getFieldContent(){
-		return this.registerField.getText();
+		registerButton.addActionListener(new ConnectionListener(client, registerField));
 	}
 	
 }
