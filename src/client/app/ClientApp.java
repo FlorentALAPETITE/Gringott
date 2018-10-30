@@ -56,11 +56,12 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 	}
 
 	@Override
-	public void endSelling(Item item) {
+	public void endSelling(Item item) throws RemoteException{
 		for (Item i : items){
 			if (i.getName().equals(item.getName())){
 				System.out.println("Fin de la vente : " + i.getName());
 				i.setSold(true);
+				this.updateView();
 				break;
 			}
 		}
@@ -71,7 +72,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
             pseudo = validPseudo;
             id = server.registerClient(this);
             isConnected = true;
-            view.setContentPane(view.getTabPanel());
+            view.openTabPanel();
             updateView();
         } catch (RemoteException e1) {
             e1.printStackTrace();
@@ -81,7 +82,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
     public void submit(Item item){
 	    try {
             server.submit(item);
-            view.getSubmitPanel().clear();
+            view.successfulSubmit();
         } catch (RemoteException e){
 	        e.printStackTrace();
         }
@@ -96,12 +97,11 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
     }
 
     public void disconnect(){
-        view.setContentPane(view.getRegisterPanel());
         try {
             server.logout(id);
             pseudo = null;
             isConnected = false;
-            updateView();
+            view.openRegisterPanel();
         } catch (RemoteException e1) {
             e1.printStackTrace();
         }
