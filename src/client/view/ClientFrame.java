@@ -99,5 +99,15 @@ public class ClientFrame extends JFrame {
 		bidsPanel.endItemSale(item);
 		bidsPanel.revalidate();
 		bidsPanel.repaint();
+
+		try {
+			if(item.getLeader().equals(client.getPseudo())){
+				ownedPanel.appendNewOwnedItem(item);
+				ownedPanel.revalidate();
+				ownedPanel.repaint();
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
 	}
 }
