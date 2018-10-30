@@ -61,6 +61,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 			if (i.getName().equals(item.getName())){
 				System.out.println("Fin de la vente : " + i.getName());
 				i.setSold(true);
+                view.endItemSale(item);
 				break;
 			}
 		}
@@ -139,6 +140,10 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
             this.items.add(item);
             view.addNewItemInBidsPanel(item);
         }
+    }
+
+    public ClientFrame getView(){
+	    return view;
     }
 
 	@Override
