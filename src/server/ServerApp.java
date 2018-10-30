@@ -33,7 +33,7 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 		logSystem = new ServerLogSystem();
 		this.dbManager = new DBManager(this);
 		this.clients = new HashMap<Integer, IClient>();
-		this.items = new ArrayList<Item>();
+		this.items = this.dbManager.listItems();
 	}
 
 	@Override
