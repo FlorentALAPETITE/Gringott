@@ -1,5 +1,6 @@
 package server;
 
+
 import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
@@ -18,47 +19,39 @@ import java.util.List;
 public class DBManager {
 
 	private static final String dbPath = "db.json";
+	private static int ITEM_ID = 0;
 
 	private BufferedReader jsonReader;
 	private BufferedWriter jsonWritter;
 	private JsonObject root;
 	private Gson gson;
+	private ServerApp server;
 
-	public DBManager(boolean recreate) {
-		if (recreate) {
-			Path file = Paths.get(dbPath);
-			try {
-				if (Files.exists(file)){
-					Files.delete(file);
-				}
-				this.jsonWritter = Files.newBufferedWriter(file, StandardOpenOption.CREATE);
-				jsonWritter.write("{\n\"items\": []\n}");
-				jsonWritter.flush();
-				this.jsonReader = new BufferedReader(new FileReader(dbPath));
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		} else {
-			try {
-				this.jsonReader = new BufferedReader(new FileReader(dbPath));
-			} catch (FileNotFoundException e1) {
-				Path file = Paths.get(dbPath);
-				try {
-					this.jsonWritter = Files.newBufferedWriter(file, StandardOpenOption.CREATE);
-					jsonWritter.write("{\n\"items\": []\n}");
-					jsonWritter.flush();
-					this.jsonReader = new BufferedReader(new FileReader(dbPath));
-				} catch (IOException e) {
-					e.printStackTrace();
-				}
-			}
-		}
+	public DBManager(ServerApp server) {
+	    this.server = server;
+	    // read the existing db
+
+        try {
+            this.jsonReader = new BufferedReader(new FileReader(dbPath));
+        } catch (FileNotFoundException e1) {
+            Path file = Paths.get(dbPath);
+            try {
+                this.jsonWritter = Files.newBufferedWriter(file, StandardOpenOption.CREATE);
+                jsonWritter.write("{\n\"items\": []\n}");
+                jsonWritter.flush();
+                this.jsonReader = new BufferedReader(new FileReader(dbPath));
+                } catch (IOException e) {
+                e.printStackTrace();
+            }
+        }
+
 		this.gson = new Gson();
 		JsonParser parser = new JsonParser();
 		this.root = parser.parse(this.jsonReader).getAsJsonObject();
 	}
 
-	public void addItem(Item i){
+	public Item addItem(Item i){
+		i.setId(ITEM_ID++);
 		this.root.get("items").getAsJsonArray().add(gson.toJsonTree(i));
 		try {
 			Path file = Paths.get(dbPath);
@@ -68,6 +61,7 @@ public class DBManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return i;
 	}
 	
 	public List<Item> listItems() {

@@ -12,6 +12,17 @@ public interface Item extends Serializable {
 	String getName();
 	
 	/**
+	 * Get the ID of the Item
+	 * @return the id
+	 */
+	int getId();
+	
+	/**
+	 * Set ID of the Item (called by the DBManager)
+	 */
+	void setId(int id);
+	
+	/**
 	 * Get the description of the Item.
 	 * @return the description
 	 */
