@@ -1,5 +1,6 @@
 package server;
 
+import log.ServerLogSystem;
 import shared.IClient;
 import shared.IServer;
 import shared.Item;
@@ -25,8 +26,10 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 	private DBManager dbManager;
 	private HashMap<Integer, IClient> clients;
 	private List<Item> items;
+	private ServerLogSystem logSystem;
 
 	ServerApp() throws RemoteException, FileNotFoundException {
+		logSystem = new ServerLogSystem();
 		this.dbManager = new DBManager(true);
 		this.clients = new HashMap<Integer, IClient>();
 		this.items = this.dbManager.listItems();
@@ -36,7 +39,7 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 	@Override
 	public int registerClient(IClient client) throws RemoteException {
 		this.clients.put(CLIENT_ID,client);
-		System.out.println("New client registered : " + client.getPseudo().split("@")[0]+"@"+CLIENT_ID); //Oui, c'est très laid, mais sinon l'id n'est pas encore initialisé pour le client, l'idéal serait d'afficher le message après
+		logSystem.writeLog("New client registered : " + client.getPseudo().split("@")[0]+"@"+CLIENT_ID); //Oui, c'est très laid, mais sinon l'id n'est pas encore initialisé pour le client, l'idéal serait d'afficher le message après
 		for (Item i : items) {
 			client.addNewItem(i);
 		}
@@ -46,18 +49,18 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 	@Override
 	public void logout(int clientId) throws RemoteException {
 		if(clients.containsKey(clientId)) {
-			System.out.println(clients.get(clientId).getPseudo() + " logged out.");
+			logSystem.writeLog(clients.get(clientId).getPseudo() + " logged out.");
 			clients.remove(clientId);
-			System.out.println(clients.size() > 0 ? clients.size()+" clients still connected." : "No more clients connected.");
+			logSystem.writeLog(clients.size() > 0 ? clients.size()+" clients still connected." : "No more clients connected.");
 		}else {
-			System.out.println("There is no such client with ID : "+clientId);
+			logSystem.writeLog("There is no such client with ID : "+clientId);
 		}
 	}
 
 	@Override
 	public void bid(Item item, double newPrice, int bidderId) throws RemoteException {
 
-		double price = monitor.updateBid(item, newPrice, clients.get(bidderId).getPseudo(), items, dbManager);
+		double price = monitor.updateBid(item, newPrice, clients.get(bidderId).getPseudo(), items, dbManager, logSystem);
 		
 		for (IClient c : clients.values()) {
 			c.update(item, price, clients.get(bidderId).getPseudo());
@@ -66,7 +69,7 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 
 	@Override
 	public void submit(Item item) throws RemoteException {
-		System.out.println("New item registered : " + item);
+		logSystem.writeLog("New item registered : " + item);
 		this.items.add(item);
 		dbManager.addItem(item);
 		for (IClient c : clients.values()) {
@@ -111,7 +114,7 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 			IServer s = new ServerApp();
 			Naming.bind("//localhost:" + port + "/enchere", s);
 
-			System.out.println("Adresse : localhost:" + port + "/enchere");
+			System.out.println("Address : localhost:" + port + "/enchere");
 
 		} catch (RemoteException e) {
 			e.printStackTrace();
