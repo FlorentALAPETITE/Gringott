@@ -19,7 +19,7 @@ public interface IServer extends Remote, Serializable {
 
 	/**
 	 * Log out a client.
-	 * @param client the client to log out.
+	 * @param clientId the client to log out.
 	 * @throws RemoteException
 	 */
 	void logout(int clientId) throws RemoteException;
@@ -28,7 +28,7 @@ public interface IServer extends Remote, Serializable {
 	 * Record a new bid from a a client for an item.
 	 * @param item the item.
 	 * @param newPrice the bid amount.
-	 * @param buyer the client.
+	 * @param bidderId the client.
 	 * @throws RemoteException
 	 */
 	void bid(Item item, double newPrice, int bidderId)  throws RemoteException;

@@ -32,11 +32,6 @@ public class BidsPanel extends JPanel {
 			itemPanels.put(i.getName(), itemPanel);
 		}
 		this.setPreferredSize(new Dimension(800, items.size()*150));
-
-		JButton logout = new JButton("Deconnexion");
-		logout.addActionListener(new DisconnectionListener(client));
-		this.add(logout);
-		
 	}
 
 	public void addNewItem(Item i) throws RemoteException {

@@ -72,7 +72,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
             pseudo = validPseudo;
             id = server.registerClient(this);
             isConnected = true;
-            view.setContentPane(view.getTabPanel());
+            view.openTabPanel();
             updateView();
         } catch (RemoteException e1) {
             e1.printStackTrace();
@@ -82,7 +82,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
     public void submit(Item item){
 	    try {
             server.submit(item);
-            view.getSubmitPanel().clear();
+            view.addNewItemToSale(item);
         } catch (RemoteException e){
 	        e.printStackTrace();
         }
@@ -97,12 +97,11 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
     }
 
     public void disconnect(){
-        view.setContentPane(view.getRegisterPanel());
         try {
             server.logout(id);
             pseudo = null;
             isConnected = false;
-            updateView();
+            view.openRegisterPanel();
         } catch (RemoteException e1) {
             e1.printStackTrace();
         }

@@ -16,22 +16,15 @@ public class ClientFrame extends JFrame {
 	private JTabbedPane tabPanel;
 	private RegisterPanel registerPanel;
 	private SubmitPanel submitPanel;
+	private SellsPanel sellsPanel;
 	
 	public ClientFrame(ClientApp client) throws RemoteException {
 		super();
 		this.client = client;
 		registerPanel = new RegisterPanel(client);
-		this.bidsPanel = new BidsPanel(client);
-		JScrollPane bidsScroll = new JScrollPane(bidsPanel);
-		this.ownedPanel = new OwnedPanel(client);
-		JScrollPane ownedScroll = new JScrollPane(ownedPanel);
-		this.submitPanel = new SubmitPanel(client);
 		this.tabPanel = new JTabbedPane();
-		this.tabPanel.addTab("Soummettre un article", submitPanel);
-		this.tabPanel.addTab("Mes achats", ownedScroll);
-		this.tabPanel.addTab("Enchères", bidsScroll);
-		this.tabPanel.setSelectedIndex(2);
-		
+
+        this.bidsPanel = new BidsPanel(this.client);
 		
 		this.setTitle("Gringott - Service d'enchère pour sorciers");
 		this.setSize(900,600);
@@ -42,29 +35,38 @@ public class ClientFrame extends JFrame {
 		this.setContentPane(registerPanel);
 	}
 
-	public Container getTabPanel() {
-		return this.tabPanel;
-	}
-	
-	public SubmitPanel getSubmitPanel() {
-		return this.submitPanel;
-	}
-
-	public RegisterPanel getRegisterPanel() {
-		return this.registerPanel;
-	}
-
 	public void rebuild() throws RemoteException {
-		this.tabPanel.remove(1);
-		this.tabPanel.remove(1);
-		this.bidsPanel = new BidsPanel(this.client);
+	    this.tabPanel.removeAll();
+        this.bidsPanel = new BidsPanel(this.client);
 		JScrollPane bidsScroll = new JScrollPane(bidsPanel);
 		this.ownedPanel = new OwnedPanel(this.client);
 		JScrollPane ownedScroll = new JScrollPane(ownedPanel);
+		this.submitPanel = new SubmitPanel(this.client);
+		this.sellsPanel = new SellsPanel(client);
+
+        this.tabPanel.add("Enchères", bidsScroll);
 		this.tabPanel.add("Mes achats", ownedScroll);
-		this.tabPanel.add("Enchères", bidsScroll);
-		this.tabPanel.setSelectedIndex(2);
+        this.tabPanel.add("Mes ventes", sellsPanel);
+        this.tabPanel.addTab("Soummettre un article", submitPanel);
+        this.tabPanel.addTab("Me déconnecter", new DisconnectionPanel(client));
+		this.tabPanel.setSelectedIndex(0);
 	}
+
+    public void openTabPanel() {
+        this.setContentPane(this.tabPanel);
+    }
+
+    public void addNewItemToSale(Item item) {
+        this.submitPanel.clear();
+        this.tabPanel.setSelectedIndex(0);
+        sellsPanel.appendNewSoldItem(item);
+        sellsPanel.revalidate();
+        sellsPanel.repaint();
+    }
+
+    public void openRegisterPanel() {
+        this.setContentPane(this.registerPanel);
+    }
 
 	public void addNewItemInBidsPanel(Item item){
 		try {
@@ -105,7 +107,11 @@ public class ClientFrame extends JFrame {
 				ownedPanel.appendNewOwnedItem(item);
 				ownedPanel.revalidate();
 				ownedPanel.repaint();
-			}
+			} else if(item.getSeller().equals(client.getPseudo())){
+                sellsPanel.updateSoldItemWhenSold(item);
+                sellsPanel.revalidate();
+                sellsPanel.repaint();
+            }
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}

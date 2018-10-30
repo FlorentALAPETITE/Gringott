@@ -81,7 +81,7 @@ public class SellableItem implements Item {
 	}
 
 	@Override
-	public Object getSeller() {
+	public String getSeller() {
 		return this.seller;
 	}
 }

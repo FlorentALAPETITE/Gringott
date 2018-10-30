@@ -74,6 +74,6 @@ public interface Item extends Serializable {
 	 * Set the seller of the Item.
 	 * @return the seller's pseudo
 	 */
-	Object getSeller();
+	String getSeller();
 		
 }
