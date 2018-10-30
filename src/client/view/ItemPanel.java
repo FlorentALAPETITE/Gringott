@@ -6,14 +6,18 @@ import shared.Item;
 
 import javax.swing.*;
 import java.awt.*;
+import java.rmi.RemoteException;
 
 public class ItemPanel extends JPanel {
 
-    private JLabel price, name, time;
+    private JLabel price, name, time, plus;
     private JTextArea jta, descLabel;
+    private JButton btnbit;
+    private ClientApp client;
 
     ItemPanel(Item i, ClientApp client){
         this.setLayout(new GridBagLayout());
+        this.client = client;
 
         name = new JLabel(i.getName());
         descLabel = new JTextArea(i.getDescription());
@@ -35,9 +39,9 @@ public class ItemPanel extends JPanel {
                 price = new JLabel(String.valueOf(i.getPrice()) + " mornilles.");
             }
 
-            JLabel plus = new JLabel("+");
+            plus = new JLabel("+");
             jta = new JTextArea(String.valueOf(Math.ceil((i.getPrice() * 0.2))));
-            BidButton btnbit = new BidButton("Enchérir", i, jta);
+            btnbit = new BidButton("Enchérir", i, jta);
 
             gbc.gridx = 0;
             gbc.gridy = 0;
@@ -124,21 +128,42 @@ public class ItemPanel extends JPanel {
         time.setForeground(Color.RED);
         descLabel.setForeground(Color.RED);
 
-        new Thread(){
-
-            @Override
-            public void run() {
-                try {
-                    Thread.sleep(500);
-                } catch (InterruptedException e) {
-                    e.printStackTrace();
-                }
-                name.setForeground(Color.BLACK);
-                time.setForeground(Color.BLACK);
-                descLabel.setForeground(Color.BLACK);
-                price.setForeground(Color.BLACK);
+        new Thread(() -> {
+            try {
+                Thread.sleep(500);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
             }
-        }.start();
+            name.setForeground(Color.BLACK);
+            time.setForeground(Color.BLACK);
+            descLabel.setForeground(Color.BLACK);
+            price.setForeground(Color.BLACK);
+        }).start();
+    }
+
+    public void endItemSale(Item item) {
+        this.remove(btnbit);
+        this.remove(plus);
+        this.remove(jta);
+        this.btnbit = null;
+        this.plus = null;
+        this.jta = null;
+
+        try {
+            if(item.getLeader().equals(client.getPseudo())){
+                new Thread(() -> JOptionPane.showMessageDialog(client.getView(), "Bravo ! Vous avez gagné : "+item.getName())).start();
+
+                Color wonColor = new Color(95, 197, 96);
+                name.setForeground(wonColor);
+                price.setForeground(wonColor);
+                time.setForeground(wonColor);
+                descLabel.setForeground(wonColor);
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
+
     }
 
 }

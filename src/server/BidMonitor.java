@@ -1,14 +1,15 @@
 package server;
 
+import log.ServerLogSystem;
 import shared.Item;
 
 import java.util.List;
 
 public class BidMonitor {
 
-    public synchronized double updateBid(Item item, double newPrice, String buyer, List<Item> items, DBManager dbManager){
+    public synchronized double updateBid(Item item, double newPrice, String buyer, List<Item> items, DBManager dbManager, ServerLogSystem logSystem){
         double price = item.getPrice() + newPrice;
-        System.out.println("New bid from " + buyer + " recorded for " + item.getName() + " at " + price);
+        logSystem.writeLog("New bid from " + buyer + " recorded for " + item.getName() + " at " + price);
 
         for (Item i : items) {
             if (i.getName().equals(item.getName())){

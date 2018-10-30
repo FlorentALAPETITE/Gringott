@@ -89,5 +89,20 @@ public class ClientFrame extends JFrame {
 		super.dispose();
 		System.exit(NORMAL);
 	}
-		
+
+	public void endItemSale(Item item) {
+		bidsPanel.endItemSale(item);
+		bidsPanel.revalidate();
+		bidsPanel.repaint();
+
+		try {
+			if(item.getLeader().equals(client.getPseudo())){
+				ownedPanel.appendNewOwnedItem(item);
+				ownedPanel.revalidate();
+				ownedPanel.repaint();
+			}
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+	}
 }
