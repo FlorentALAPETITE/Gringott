@@ -56,7 +56,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 	}
 
 	@Override
-	public void endSelling(Item item) {
+	public void endSelling(Item item) throws RemoteException{
 		for (Item i : items){
 			if (i.getName().equals(item.getName())){
 				System.out.println("Fin de la vente : " + i.getName());

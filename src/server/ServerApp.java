@@ -24,20 +24,17 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 
 	private DBManager dbManager;
 	private HashMap<Integer, IClient> clients;
-	private List<Item> items;
 
-	ServerApp() throws RemoteException, FileNotFoundException {
-		this.dbManager = new DBManager(true);
+	public ServerApp() throws RemoteException, FileNotFoundException {
+		this.dbManager = new DBManager(this);
 		this.clients = new HashMap<Integer, IClient>();
-		this.items = this.dbManager.listItems();
-		this.initDB();
 	}
 
 	@Override
 	public int registerClient(IClient client) throws RemoteException {
 		this.clients.put(CLIENT_ID,client);
 		System.out.println("New client registered : " + client.getPseudo().split("@")[0]+"@"+CLIENT_ID); //Oui, c'est très laid, mais sinon l'id n'est pas encore initialisé pour le client, l'idéal serait d'afficher le message après
-		for (Item i : items) {
+		for (Item i : this.dbManager.listItems()) {
 			client.addNewItem(i);
 		}
 		return CLIENT_ID++;
@@ -57,7 +54,7 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 	@Override
 	public void bid(Item item, double newPrice, int bidderId) throws RemoteException {
 
-		double price = monitor.updateBid(item, newPrice, clients.get(bidderId).getPseudo(), items, dbManager);
+		double price = monitor.updateBid(item, newPrice, clients.get(bidderId).getPseudo(), this.dbManager.listItems(), dbManager);
 		
 		for (IClient c : clients.values()) {
 			c.update(item, price, clients.get(bidderId).getPseudo());
@@ -67,7 +64,6 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 	@Override
 	public void submit(Item item) throws RemoteException {
 		System.out.println("New item registered : " + item);
-		this.items.add(item);
 		dbManager.addItem(item);
 		for (IClient c : clients.values()) {
 			c.addNewItem(item);
@@ -78,7 +74,7 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 	
 	@Override
 	public List<Item> getItems() {
-		return this.items;
+		return this.dbManager.listItems();
 	}
 	
 	@Override
@@ -123,33 +119,5 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 			e.printStackTrace();
 		}
 	}
-
-    public void initDB() {
-        Item obj1 = new SellableItem("Botruc", "Petite créature d'une vingtaine de centimètres ayant un aspect végétal et deux longs doigts pointus à chaque main. - Peut crocheter des serrures -", 400, "nDragonneau", 5);
-        Item obj2 = new SellableItem("Cerbère nain", "Chien géant à trois tête servant de gardien - Cet exemplaire est de petite taille -", 250, "nDragonneau", 4);
-        Item obj3 = new SellableItem("Demiguise", "Créature pouvant se rendre invisible lorsqu'elle est menacée. - Ses poils servent à tisser des toiles d'invisibilité -" , 900, "nDragonneau", 3);
-        Item obj4 = new SellableItem("Démonzémerveille", "Créature apparaissant sous forme de boule et se transformant, quand on la lance, en oiseau de proie bleu et vert. - A un attrait particulier pour le cerveau humain -", 1000, "nDragonneau", 2);
-        Item obj5 = new SellableItem("Éruptif", "Sorte de Rhinocéros géant vivant en Afrique. Le fluide contenu dans sa corne peut être injecté dans tout type de materiau, provoquant l'explosion de celui-ci. - Sa peau épaisse le rend insensible à la plupart des sorts -", 600, "nDragonneau", 2);
-        Item obj6 = new SellableItem("Plume d'Hippogriffe", "L'hippogriffe est une créature volante mi-aigle, mi- cheval. Il est très dangereux tant qu'il n'est pas dressé. - Cette plume a été récoltée dans les alentours de Poudlard et mesure 50 cm -", 150, "nDragonneau", 3);
-        Item obj7 = new SellableItem("Niffleur", "Animal à la fourrure noire et au long museau semblable à un ornithorynque. Ils sont attirés par tout ce qui brille. - Formidable voleur -", 250, "nDragonneau", 4);
-        Item obj8 = new SellableItem("OEuf d'Occamy", "Les Occamy sont une sorte d'oiseau-serpent. Ils ont la particularité d'être choranaptyxique : leur taille varient en fonction de l'espace dont ils disposent. - La coquille des oeufs d'Occamy est en argent pur -", 700, "nDragonneau", 6);
-        Item obj9 = new SellableItem("Oiseau-Tonnerre", "Vivant en Arizona, ces oiseau provoquent des tempêtes lorsqu'ils se sentent menacés. - Leur plume peuvent être utilisées pour fabriquer des baguettes magiques", 1250, "nDragonneau", 5);
-        Item obj10 = new SellableItem("OEuf congelé de Serpencendre", "Les serpencendres naissent dans des feux magiques laissés sans surveillance. Ils se cachent dans des recoins de la maison pour y pondre leurs oeufs qui, s'ils réussissent à grandir sans être repérés et chassés, enflamment la maison." , 2000, "nDragonneau", 1);
-
-        try {
-            this.submit(obj1);
-            this.submit(obj2);
-            this.submit(obj3);
-            this.submit(obj4);
-            this.submit(obj5);
-            this.submit(obj6);
-            this.submit(obj7);
-            this.submit(obj8);
-            this.submit(obj9);
-            this.submit(obj10);
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-    }
 
 }
