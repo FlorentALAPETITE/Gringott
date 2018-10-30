@@ -48,6 +48,7 @@ public class ClientFrame extends JFrame {
 		this.tabPanel.add("Mes achats", ownedScroll);
         this.tabPanel.add("Mes ventes", sellsPanel);
         this.tabPanel.addTab("Soummettre un article", submitPanel);
+        this.tabPanel.addTab("Me déconnecter", new DisconnectionPanel(client));
 		this.tabPanel.setSelectedIndex(0);
 	}
 
