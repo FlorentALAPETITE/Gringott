@@ -8,7 +8,7 @@ import java.awt.*;
 import java.rmi.RemoteException;
 import java.util.List;
 
-import static javafx.scene.input.KeyCode.J;
+//import static javafx.scene.input.KeyCode.J;
 
 class OwnedPanel extends JPanel {
 

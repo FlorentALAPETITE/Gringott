@@ -63,12 +63,12 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 
 	@Override
 	public void submit(Item item) throws RemoteException {
-		System.out.println("New item registered : " + item);
-		dbManager.addItem(item);
+		Item storedItem = dbManager.addItem(item);
+		System.out.println("New item registered : " + storedItem);
 		for (IClient c : clients.values()) {
-			c.addNewItem(item);
+			c.addNewItem(storedItem);
 		}
-		Thread est = new EndSellingThread(item, this);
+		Thread est = new EndSellingThread(storedItem, this);
 		est.start();
 	}
 	

@@ -19,6 +19,7 @@ import java.util.List;
 public class DBManager {
 
 	private static final String dbPath = "db.json";
+	private static int ITEM_ID = 0;
 
 	private BufferedReader jsonReader;
 	private BufferedWriter jsonWritter;
@@ -49,7 +50,8 @@ public class DBManager {
 		this.root = parser.parse(this.jsonReader).getAsJsonObject();
 	}
 
-	public void addItem(Item i){
+	public Item addItem(Item i){
+		i.setId(ITEM_ID++);
 		this.root.get("items").getAsJsonArray().add(gson.toJsonTree(i));
 		try {
 			Path file = Paths.get(dbPath);
@@ -59,6 +61,7 @@ public class DBManager {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
+		return i;
 	}
 	
 	public List<Item> listItems() {

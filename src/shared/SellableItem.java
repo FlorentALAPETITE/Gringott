@@ -5,6 +5,7 @@ import java.util.Date;
 public class SellableItem implements Item {
 
 	private static final long serialVersionUID = -4517882019233732317L;
+	private int id;
 	private String name;
 	private String description;
 	private String seller;
@@ -13,7 +14,8 @@ public class SellableItem implements Item {
 	private Date time;
 	private boolean sold;
 	
-	public SellableItem(String name, String description, double price, String seller, long time2leave) {
+	public SellableItem(int id, String name, String description, double price, String seller, long time2leave) {
+		this.id = id;
 		this.name = name;
 		this.description = description;
 		this.price = price;
@@ -28,6 +30,16 @@ public class SellableItem implements Item {
 		return this.name;
 	}
 
+	@Override
+	public int getId() {
+		return this.id;
+	}
+	
+	@Override
+	public void setId(int id) {
+		this.id = id;
+	}
+	
 	@Override
 	public String getDescription() {
 		return this.description;
