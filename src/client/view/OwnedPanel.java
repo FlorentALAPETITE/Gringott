@@ -6,6 +6,7 @@ import shared.Item;
 import javax.swing.*;
 import java.awt.*;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.List;
 
 //import static javafx.scene.input.KeyCode.J;
@@ -14,7 +15,7 @@ class OwnedPanel extends JPanel {
 
 	private IClient client;
 
-	OwnedPanel(IClient client) throws RemoteException {
+	OwnedPanel(IClient client) {
 		super();
 
 		this.client = client;

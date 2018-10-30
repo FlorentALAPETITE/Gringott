@@ -82,7 +82,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
     public void submit(Item item){
 	    try {
             server.submit(item);
-            view.successfulSubmit();
+            view.addNewItemToSale(item);
         } catch (RemoteException e){
 	        e.printStackTrace();
         }

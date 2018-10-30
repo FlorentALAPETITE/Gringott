@@ -16,6 +16,7 @@ public class ClientFrame extends JFrame {
 	private JTabbedPane tabPanel;
 	private RegisterPanel registerPanel;
 	private SubmitPanel submitPanel;
+	private SellsPanel sellsPanel;
 	
 	public ClientFrame(ClientApp client) throws RemoteException {
 		super();
@@ -41,9 +42,11 @@ public class ClientFrame extends JFrame {
 		this.ownedPanel = new OwnedPanel(this.client);
 		JScrollPane ownedScroll = new JScrollPane(ownedPanel);
 		this.submitPanel = new SubmitPanel(this.client);
+		this.sellsPanel = new SellsPanel(client);
 
         this.tabPanel.add("Enchères", bidsScroll);
 		this.tabPanel.add("Mes achats", ownedScroll);
+        this.tabPanel.add("Mes ventes", sellsPanel);
         this.tabPanel.addTab("Soummettre un article", submitPanel);
 		this.tabPanel.setSelectedIndex(0);
 	}
@@ -52,9 +55,12 @@ public class ClientFrame extends JFrame {
         this.setContentPane(this.tabPanel);
     }
 
-    public void successfulSubmit() {
+    public void addNewItemToSale(Item item) {
         this.submitPanel.clear();
         this.tabPanel.setSelectedIndex(0);
+        sellsPanel.appendNewSoldItem(item);
+        sellsPanel.revalidate();
+        sellsPanel.repaint();
     }
 
     public void openRegisterPanel() {
@@ -100,7 +106,11 @@ public class ClientFrame extends JFrame {
 				ownedPanel.appendNewOwnedItem(item);
 				ownedPanel.revalidate();
 				ownedPanel.repaint();
-			}
+			} else if(item.getSeller().equals(client.getPseudo())){
+                sellsPanel.updateSoldItemWhenSold(item);
+                sellsPanel.revalidate();
+                sellsPanel.repaint();
+            }
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
