@@ -4,7 +4,6 @@ import log.ServerLogSystem;
 import shared.IClient;
 import shared.IServer;
 import shared.Item;
-import shared.SellableItem;
 
 import java.io.FileNotFoundException;
 import java.net.MalformedURLException;
@@ -13,9 +12,7 @@ import java.rmi.Naming;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
 import java.util.HashMap;
-import java.util.List;
 
 public class ServerApp extends UnicastRemoteObject implements IServer {
 
@@ -31,7 +28,7 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 
 	ServerApp() throws RemoteException, FileNotFoundException {
 		logSystem = new ServerLogSystem();
-		this.dbManager = new DBManager(this);
+		this.dbManager = new DBManager();
 		this.items = this.dbManager.listItems();
 		launchEndSellingThreads();
 		this.clients = new HashMap<Integer, IClient>();

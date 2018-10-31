@@ -1,12 +1,8 @@
 package server;
 
 
-import com.google.gson.Gson;
-import com.google.gson.JsonElement;
-import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.sun.security.auth.SolarisNumericUserPrincipal;
-
+import com.google.gson.*;
+import log.ServerLogSystem;
 import shared.Item;
 import shared.SellableItem;
 
@@ -15,111 +11,101 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
-import java.util.List;
+import java.util.Map;
 
 public class DBManager {
 
 	private static final String dbPath = "db.json";
 	private static int ITEM_ID = 0;
 
+    private Path file;
 	private BufferedReader jsonReader;
 	private BufferedWriter jsonWritter;
-	private JsonObject root;
+    private JsonObject root;
+	private JsonObject registeredItems;
 	private Gson gson;
-	private ServerApp server;
 
-	public DBManager(ServerApp server) {
-	    this.server = server;
-	    // read the existing db
+	private ServerLogSystem logger;
 
+	DBManager() {
         boolean emptyDatabase = false;
+        this.file = Paths.get(dbPath);
+        this.logger = new ServerLogSystem();
+
+        // read the existing db
         try {
             this.jsonReader = new BufferedReader(new FileReader(dbPath));            
         } catch (FileNotFoundException e1) {
-            Path file = Paths.get(dbPath);
             try {
                 emptyDatabase = true;
                 this.jsonWritter = Files.newBufferedWriter(file, StandardOpenOption.CREATE);
-                jsonWritter.write("{\n\"items\": []\n}");
+                jsonWritter.write("{\n\"items\": {}\n}");
                 jsonWritter.flush();
                 this.jsonReader = new BufferedReader(new FileReader(dbPath));
-                } catch (IOException e) {
+            } catch (IOException e) {
                 e.printStackTrace();
+                logger.writeLog("error while reading existing database : " + e.getMessage());
             }
         }
 
 		this.gson = new Gson();
 		JsonParser parser = new JsonParser();
 		this.root = parser.parse(this.jsonReader).getAsJsonObject();
+        this.registeredItems = root.get("items").getAsJsonObject();
 
-		if(emptyDatabase)
+        if(emptyDatabase)
             initializeDatabase();
 		
 		//Initialize ITEM_ID as last id used in database
-		JsonElement registeredItems = root.get("items");
-		if (registeredItems.isJsonArray()){
-			int size = registeredItems.getAsJsonArray().size();
-			if(size>0) {
-				this.ITEM_ID = gson.fromJson(registeredItems.getAsJsonArray().get(size-1),SellableItem.class).getId()+1;
-			}
+		if (registeredItems.size() > 0){
+		    Item lastItem = gson.fromJson(registeredItems.get(Collections.max(registeredItems.keySet())), SellableItem.class);
+            DBManager.ITEM_ID = lastItem.getId() + 1;
+            logger.writeLog("DBManager.ITEM_ID initialized at " + DBManager.ITEM_ID);
 		}
 	}
 
 	public Item addItem(Item i){
 		i.setId(ITEM_ID++);
-		this.root.get("items").getAsJsonArray().add(gson.toJsonTree(i));
-		try {
-			Path file = Paths.get(dbPath);
-			this.jsonWritter = Files.newBufferedWriter(file, StandardOpenOption.CREATE);
-			jsonWritter.write(root.toString());
-			jsonWritter.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+		this.writeItem(i);
 		return i;
 	}
-	
-	public HashMap<Integer,Item> listItems() {
-		HashMap<Integer,Item> items = new HashMap<Integer,Item>();
-		if (root!= null ) {
-		JsonElement registeredItems = root.get("items");
-			if (registeredItems.isJsonArray()){
-				for (JsonElement item : registeredItems.getAsJsonArray()){
-					Item i = gson.fromJson(item, SellableItem.class);
-					items.put(i.getId(), i);
-				}
-			}
-		}
-		return items;
-	}
+
+	private void writeItem(Item i){
+        registeredItems.getAsJsonObject().add(i.getId() + "", gson.toJsonTree(i));
+        try {
+            this.jsonWritter = Files.newBufferedWriter(file, StandardOpenOption.CREATE);
+            jsonWritter.write(root.toString());
+            jsonWritter.newLine();
+            jsonWritter.flush();
+        } catch (IOException e) {
+            logger.writeLog("error while writing item " + i.getId() + e.getMessage());
+            e.printStackTrace();
+        }
+    }
 
 	public void updateItem(Item i) {
-		// TODO Find item, remove it, replace it with new.
-		JsonElement registeredItems = root.get("items");
-		if (registeredItems.isJsonArray()){
-			for (JsonElement item : registeredItems.getAsJsonArray()){
-				if (item.getAsJsonObject().get("name").getAsString().equals(i.getName())) {
-					registeredItems.getAsJsonArray().remove(item);
-					break;
-				}
-			}
-		}
-		this.root.get("items").getAsJsonArray().add(gson.toJsonTree(i));
-		try {
-			Path file = Paths.get(dbPath);
-			this.jsonWritter = Files.newBufferedWriter(file, StandardOpenOption.CREATE);
-			jsonWritter.write(root.toString());
-			jsonWritter.flush();
-		} catch (IOException e) {
-			e.printStackTrace();
-		}
+        registeredItems.remove(i.getId() + "");
+		this.writeItem(i);
 	}
 
-    public void initializeDatabase() {
+    public HashMap<Integer,Item> listItems() {
+        HashMap<Integer,Item> items = new HashMap<Integer,Item>();
+        if (root!= null) {
+            if (registeredItems.isJsonObject()){
+                for (Map.Entry<String, JsonElement> item : registeredItems.getAsJsonObject().entrySet()){
+                    Item i = gson.fromJson(item.getValue(), SellableItem.class);
+                    items.put(i.getId(), i);
+                }
+            }
+        }
+        return items;
+    }
+
+    private void initializeDatabase() {
         Item obj1 = new SellableItem(0,"Botruc", "Petite créature d'une vingtaine de centimètres ayant un aspect végétal et deux longs doigts pointus à chaque main. - Peut crocheter des serrures -", 400, "nDragonneau@0", 5);
-        Item obj2 = new SellableItem(0,"Cerbère nain", "Chien géant à trois tête servant de gardien - Cet exemplaire est de petite taille -", 250, "nDragonneau@0", 4);
+        Item obj2 = new SellableItem(0,"Cerbère nain", "Chien géant à trois têtes servant de gardien - Cet exemplaire est de petite taille -", 250, "nDragonneau@0", 4);
         Item obj3 = new SellableItem(0,"Demiguise", "Créature pouvant se rendre invisible lorsqu'elle est menacée. - Ses poils servent à tisser des toiles d'invisibilité -" , 900, "nDragonneau@0", 3);
         Item obj4 = new SellableItem(0,"Démonzémerveille", "Créature apparaissant sous forme de boule et se transformant, quand on la lance, en oiseau de proie bleu et vert. - A un attrait particulier pour le cerveau humain -", 1000, "nDragonneau@0", 2);
         Item obj5 = new SellableItem(0,"Éruptif", "Sorte de Rhinocéros géant vivant en Afrique. Le fluide contenu dans sa corne peut être injecté dans tout type de materiau, provoquant l'explosion de celui-ci. - Sa peau épaisse le rend insensible à la plupart des sorts -", 600, "nDragonneau@0", 2);
