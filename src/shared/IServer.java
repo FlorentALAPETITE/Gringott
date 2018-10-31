@@ -31,7 +31,7 @@ public interface IServer extends Remote, Serializable {
 	 * @param bidderId the client.
 	 * @throws RemoteException
 	 */
-	void bid(Item item, double newPrice, int bidderId)  throws RemoteException;
+	void bid(int itemId, double newPrice, int bidderId)  throws RemoteException;
 	
 	/**
 	 * Record a new Item.
@@ -45,7 +45,7 @@ public interface IServer extends Remote, Serializable {
 	 * @return the items.
 	 * @throws RemoteException
 	 */
-	List<Item> getItems()  throws RemoteException;
+	HashMap<Integer,Item> getItems()  throws RemoteException;
 	
 	/**
 	 * List server's clients

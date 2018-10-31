@@ -25,7 +25,7 @@ public class BidsPanel extends JPanel {
 		items = new HashMap<>();
 		itemPanels = new HashMap<>();
 		
-		for (Item i : client.getItems()) {
+		for (Item i : client.getItems().values()) {
 			items.put(i.getName(), i); // TODO replace by ID
 			ItemPanel itemPanel = new ItemPanel(i, client);
 			this.add(itemPanel);

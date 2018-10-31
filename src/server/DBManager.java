@@ -5,6 +5,8 @@ import com.google.gson.Gson;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
 import com.google.gson.JsonParser;
+import com.sun.security.auth.SolarisNumericUserPrincipal;
+
 import shared.Item;
 import shared.SellableItem;
 
@@ -14,6 +16,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class DBManager {
@@ -32,7 +35,7 @@ public class DBManager {
 	    // read the existing db
 
         try {
-            this.jsonReader = new BufferedReader(new FileReader(dbPath));
+            this.jsonReader = new BufferedReader(new FileReader(dbPath));            
         } catch (FileNotFoundException e1) {
             Path file = Paths.get(dbPath);
             try {
@@ -48,6 +51,15 @@ public class DBManager {
 		this.gson = new Gson();
 		JsonParser parser = new JsonParser();
 		this.root = parser.parse(this.jsonReader).getAsJsonObject();
+		
+		//Initialize ITEM_ID as last id used in database
+		JsonElement registeredItems = root.get("items");
+		if (registeredItems.isJsonArray()){
+			int size = registeredItems.getAsJsonArray().size();
+			if(size>0) {
+				this.ITEM_ID = gson.fromJson(registeredItems.getAsJsonArray().get(size-1),SellableItem.class).getId()+1;
+			}
+		}
 	}
 
 	public Item addItem(Item i){
@@ -64,18 +76,17 @@ public class DBManager {
 		return i;
 	}
 	
-	public List<Item> listItems() {
-		List<Item> items = new ArrayList<Item>();
+	public HashMap<Integer,Item> listItems() {
+		HashMap<Integer,Item> items = new HashMap<Integer,Item>();
 		if (root!= null ) {
 		JsonElement registeredItems = root.get("items");
 			if (registeredItems.isJsonArray()){
 				for (JsonElement item : registeredItems.getAsJsonArray()){
 					Item i = gson.fromJson(item, SellableItem.class);
-					items.add(i);
+					items.put(i.getId(), i);
 				}
 			}
 		}
-		
 		return items;
 	}
 

@@ -2,6 +2,7 @@ package shared;
 
 import java.rmi.Remote;
 import java.rmi.RemoteException;
+import java.util.HashMap;
 import java.util.List;
 
 public interface IClient extends Remote {
@@ -46,7 +47,7 @@ public interface IClient extends Remote {
 	/**
 	 * Get client's items.
 	 */
-	List<Item> getItems() throws RemoteException;
+	HashMap<Integer,Item> getItems() throws RemoteException;
 
 	/**
 	 * Get client's server.

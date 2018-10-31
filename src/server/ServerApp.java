@@ -26,21 +26,21 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 
 	private DBManager dbManager;
 	private HashMap<Integer, IClient> clients;
-	private List<Item> items;
+	private HashMap<Integer,Item> items;
 	private ServerLogSystem logSystem;
 
 	ServerApp() throws RemoteException, FileNotFoundException {
 		logSystem = new ServerLogSystem();
 		this.dbManager = new DBManager(this);
-		this.clients = new HashMap<Integer, IClient>();
 		this.items = this.dbManager.listItems();
+		this.clients = new HashMap<Integer, IClient>();
 	}
 
 	@Override
 	public int registerClient(IClient client) throws RemoteException {
 		this.clients.put(CLIENT_ID,client);
 		logSystem.writeLog("New client registered : " + client.getPseudo().split("@")[0]+"@"+CLIENT_ID); //Oui, c'est très laid, mais sinon l'id n'est pas encore initialisé pour le client, l'idéal serait d'afficher le message après
-		for (Item i : items) {
+		for (Item i : items.values()) {
 			client.addNewItem(i);
 		}
 		return CLIENT_ID++;
@@ -58,19 +58,19 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 	}
 
 	@Override
-	public void bid(Item item, double newPrice, int bidderId) throws RemoteException {
+	public void bid(int itemId, double newPrice, int bidderId) throws RemoteException {
 
-		double price = monitor.updateBid(item, newPrice, clients.get(bidderId).getPseudo(), items, dbManager, logSystem);
+		double price = monitor.updateBid(itemId, newPrice, clients.get(bidderId).getPseudo(), items, dbManager, logSystem);
 		
 		for (IClient c : clients.values()) {
-			c.update(item, price, clients.get(bidderId).getPseudo());
+			c.update(items.get(itemId), price, clients.get(bidderId).getPseudo());
 		}
 	}
 
 	@Override
 	public void submit(Item item) throws RemoteException {
 		Item storedItem = dbManager.addItem(item);
-		this.items.add(storedItem);
+		this.items.put(storedItem.getId(),storedItem);
 		logSystem.writeLog("New item registered : " + storedItem);
 		
 		for (IClient c : clients.values()) {
@@ -81,7 +81,7 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 	}
 	
 	@Override
-	public List<Item> getItems() {
+	public HashMap<Integer,Item> getItems() {
 		return this.dbManager.listItems();
 	}
 	

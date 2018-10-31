@@ -11,6 +11,7 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 
 public class ClientApp extends UnicastRemoteObject implements IClient {
@@ -20,11 +21,11 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 	private boolean isConnected = false;
 	private ClientFrame view;
 	private String pseudo;
-	private List<Item> items;
+	private HashMap<Integer,Item> items;
 	private IServer server;
 
 	public ClientApp(String url) throws MalformedURLException, RemoteException, NotBoundException {
-		this.items = new ArrayList<>();
+		this.items = new HashMap<Integer,Item>();
 		this.view = new ClientFrame(this);
 		this.view.setVisible(true);
 		this.server = (IServer) Naming.lookup(url);
@@ -45,26 +46,20 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 
 	@Override
 	public void update(Item item, double newPrice, String buyer) throws RemoteException {
-		for (Item i : items){
-			if (i.getName().equals(item.getName()) && !i.isSold()){
-				System.out.println("Mise à jour de l'item : " + i.getName());
-				i.setPrice(newPrice);
-				i.setLeader(buyer);
-				view.updateItemPrice(item,newPrice, buyer);
-			}
+		if(!items.get(item.getId()).isSold()) {
+			System.out.println("Mise à jour de l'item : " + items.get(item.getId()).getName());
+			items.get(item.getId()).setPrice(newPrice);
+			items.get(item.getId()).setLeader(buyer);
+			view.updateItemPrice(item,newPrice, buyer);
 		}
 	}
 
 	@Override
 	public void endSelling(Item item) throws RemoteException{
-		for (Item i : items){
-			if (i.getName().equals(item.getName())){
-				System.out.println("Fin de la vente : " + i.getName());
-				i.setSold(true);
-                view.endItemSale(item);
-				break;
-			}
-		}
+		System.out.println("Fin de la vente : " + items.get(item.getId()).getName());
+		items.get(item.getId()).setSold(true);
+        view.endItemSale(item);
+		
 	}
 
     public void connect(String validPseudo){
@@ -90,7 +85,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 
     public void bid(Item item, Double price) {
 	    try {
-            server.bid(item, price, id);
+            server.bid(item.getId(), price, id);
         } catch (RemoteException e1) {
             e1.printStackTrace();
         }
@@ -128,15 +123,9 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 
     @Override
     public void addNewItem(Item item) throws RemoteException {
-        boolean contains = false;
-        for (Item i : items){
-            if (i.getName().equals(item.getName())){
-                contains = true;
-            }
-        }
-        if (!contains){
-            System.out.println("Nouvel item ajouté : " + item.getName());
-            this.items.add(item);
+        if(!items.containsKey(item.getId())) {
+        	System.out.println("Nouvel item ajouté : " + item.getName());
+            this.items.put(item.getId(),item);
             view.addNewItemInBidsPanel(item);
         }
     }
@@ -151,7 +140,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 	}
 
 	@Override
-	public List<Item> getItems() throws RemoteException {
+	public HashMap<Integer,Item> getItems() throws RemoteException {
 		return this.items;
 	}
 
