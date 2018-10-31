@@ -12,6 +12,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
 import java.util.Collections;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -91,11 +92,13 @@ public class DBManager {
 	}
 
     public HashMap<Integer,Item> listItems() {
-        HashMap<Integer,Item> items = new HashMap<Integer,Item>();
-        if (root!= null) {
-            if (registeredItems.isJsonObject()){
-                for (Map.Entry<String, JsonElement> item : registeredItems.getAsJsonObject().entrySet()){
-                    Item i = gson.fromJson(item.getValue(), SellableItem.class);
+        HashMap<Integer,Item> items = new HashMap<>();
+        if (root!= null && registeredItems.isJsonObject()){
+            for (Map.Entry<String, JsonElement> item : registeredItems.getAsJsonObject().entrySet()){
+                Item i = gson.fromJson(item.getValue(), SellableItem.class);
+
+                // we only give not deprecated items
+                if (i.getTime().getTime() > new Date(System.currentTimeMillis()).getTime()) {
                     items.put(i.getId(), i);
                 }
             }
