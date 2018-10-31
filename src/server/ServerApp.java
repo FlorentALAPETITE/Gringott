@@ -106,7 +106,8 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 
     private void launchEndSellingThreads(){
 	    for (Item i : items.values()){
-            new EndSellingThread(i, this).start();
+	    	if(!i.isSold())
+            	new EndSellingThread(i, this).start();
         }
     }
 	

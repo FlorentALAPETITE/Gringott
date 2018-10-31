@@ -11,10 +11,7 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardOpenOption;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 
 public class DBManager {
 
@@ -74,16 +71,18 @@ public class DBManager {
 	}
 
 	private void writeItem(Item i){
-        registeredItems.getAsJsonObject().add(i.getId() + "", gson.toJsonTree(i));
-        try {
-            this.jsonWritter = Files.newBufferedWriter(file, StandardOpenOption.CREATE);
-            jsonWritter.write(root.toString());
-            jsonWritter.newLine();
-            jsonWritter.flush();
-        } catch (IOException e) {
-            logger.writeLog("error while writing item " + i.getId() + e.getMessage());
-            e.printStackTrace();
-        }
+		synchronized (this) {
+			registeredItems.getAsJsonObject().add(i.getId() + "", gson.toJsonTree(i));
+			try {
+				this.jsonWritter = Files.newBufferedWriter(file, StandardOpenOption.CREATE);
+				jsonWritter.write(root.toString());
+				jsonWritter.newLine();
+				jsonWritter.flush();
+			} catch (IOException e) {
+				logger.writeLog("error while writing item " + i.getId() + e.getMessage());
+				e.printStackTrace();
+			}
+		}
     }
 
 	public void updateItem(Item i) {
@@ -94,14 +93,21 @@ public class DBManager {
     public HashMap<Integer,Item> listItems() {
         HashMap<Integer,Item> items = new HashMap<>();
         if (root!= null && registeredItems.isJsonObject()){
+        	Item i;
+        	ArrayList<Item> modifiedItems = new ArrayList<Item>();
             for (Map.Entry<String, JsonElement> item : registeredItems.getAsJsonObject().entrySet()){
-                Item i = gson.fromJson(item.getValue(), SellableItem.class);
+                i = gson.fromJson(item.getValue(), SellableItem.class);
 
-                // we only give not deprecated items
-                if (i.getTime().getTime() > new Date(System.currentTimeMillis()).getTime()) {
-                    items.put(i.getId(), i);
-                }
+                // Update database history
+				if (i.getTime().getTime() <= new Date(System.currentTimeMillis()).getTime()) {
+					i.setSold(true);
+					modifiedItems.add(i);
+				}
+				items.put(i.getId(), i);
             }
+            for(Item mod : modifiedItems){
+            	updateItem(mod);
+			}
         }
         return items;
     }
