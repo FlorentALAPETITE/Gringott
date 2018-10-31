@@ -33,6 +33,7 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 		logSystem = new ServerLogSystem();
 		this.dbManager = new DBManager(this);
 		this.items = this.dbManager.listItems();
+		launchEndSellingThreads();
 		this.clients = new HashMap<Integer, IClient>();
 	}
 
@@ -59,7 +60,6 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 
 	@Override
 	public void bid(int itemId, double newPrice, int bidderId) throws RemoteException {
-
 		double price = monitor.updateBid(itemId, newPrice, clients.get(bidderId).getPseudo(), items, dbManager, logSystem);
 		
 		for (IClient c : clients.values()) {
@@ -97,13 +97,19 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 
 	public void endSale(Item item) {
         item.setSold(true);
-        this.getDB().updateItem(item);;
+        this.getDB().updateItem(item);
         for (IClient c : clients.values()) {
             try {
                 c.endSelling(item);
             } catch (RemoteException e) {
                 e.printStackTrace();
             }
+        }
+    }
+
+    private void launchEndSellingThreads(){
+	    for (Item i : items.values()){
+            new EndSellingThread(i, this).start();
         }
     }
 	

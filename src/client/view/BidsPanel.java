@@ -53,6 +53,7 @@ public class BidsPanel extends JPanel {
 	}
 
     public void endItemSale(Item item) {
-        itemPanels.get(item.getName()).endItemSale(item);
+		if(itemPanels.containsKey(item.getName()))
+        	itemPanels.get(item.getName()).endItemSale(item);
     }
 }
