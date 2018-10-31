@@ -4,7 +4,6 @@ import client.app.ClientApp;
 import shared.Item;
 
 import javax.swing.*;
-import java.awt.*;
 import java.rmi.RemoteException;
 
 public class ClientFrame extends JFrame {

@@ -5,7 +5,9 @@ import shared.IClient;
 import shared.IServer;
 import shared.Item;
 
+import javax.swing.*;
 import java.net.MalformedURLException;
+import java.rmi.ConnectException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
@@ -28,7 +30,13 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 		this.items = new HashMap<Integer,Item>();
 		this.view = new ClientFrame(this);
 		this.view.setVisible(true);
-		this.server = (IServer) Naming.lookup(url);
+		try{
+            this.server = (IServer) Naming.lookup(url);
+        } catch (RemoteException e){
+            JOptionPane.showMessageDialog(null, "Le serveur n'est pas accessible", "Erreur Serveur", JOptionPane.ERROR_MESSAGE);
+            System.exit(0);
+		}
+
 	}
 
 
