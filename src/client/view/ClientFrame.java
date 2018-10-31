@@ -104,7 +104,7 @@ public class ClientFrame extends JFrame {
 		bidsPanel.repaint();
 
 		try {
-			if(item.getLeader().equals(client.getPseudo())){
+			if(item.getLeader()!=null && item.getLeader().equals(client.getPseudo())){
 				ownedPanel.appendNewOwnedItem(item);
 				ownedPanel.revalidate();
 				ownedPanel.repaint();

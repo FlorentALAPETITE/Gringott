@@ -71,7 +71,7 @@ public class SellsPanel extends JPanel {
         System.out.println("J'ai vendu : " + i.getName());
         JLabel itemlabel = items.get(i.getName());
         String label ;
-        if (i.getLeader().equals("")){
+        if (i.getLeader()!= null && i.getLeader().equals("")){
             label = "Votre objet n'a pas été vendu";
         } else {
             label = "Vendu pour " + i.getPrice() + "mornilles à " + i.getLeader();

@@ -150,7 +150,7 @@ public class ItemPanel extends JPanel {
         this.jta = null;
 
         try {
-            if(item.getLeader().equals(client.getPseudo())){
+            if(item.getLeader()!=null && item.getLeader().equals(client.getPseudo())){
                 new Thread(() -> JOptionPane.showMessageDialog(client.getView(), "Bravo ! Vous avez gagné : "+item.getName())).start();
 
                 Color wonColor = new Color(95, 197, 96);
