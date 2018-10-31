@@ -14,12 +14,24 @@ import java.util.List;
 class OwnedPanel extends JPanel {
 
 	private IClient client;
+	private int height = 600;
 
 	OwnedPanel(IClient client) {
 		super();
 
 		this.client = client;
-		this.setPreferredSize(new Dimension(800,600));
+		this.setPreferredSize(new Dimension(800,height));
+
+		try {
+			for(Item item : client.getItems().values()){
+                if(item.getLeader()!=null && item.getLeader().equals(client.getPseudo()) && item.isSold()){
+                	appendNewOwnedItem(item);
+				}
+            }
+		} catch (RemoteException e) {
+			e.printStackTrace();
+		}
+
 	}
 
 	public void appendNewOwnedItem(Item i){
@@ -56,6 +68,8 @@ class OwnedPanel extends JPanel {
 			e.printStackTrace();
 		}
 		this.add(itemPanel);
+		height+=50;
+		this.setPreferredSize(new Dimension(800,height));
 	}
 
 }

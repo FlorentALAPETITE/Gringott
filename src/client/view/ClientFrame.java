@@ -43,10 +43,11 @@ public class ClientFrame extends JFrame {
 		JScrollPane ownedScroll = new JScrollPane(ownedPanel);
 		this.submitPanel = new SubmitPanel(this.client);
 		this.sellsPanel = new SellsPanel(client);
+		JScrollPane sellsScroll = new JScrollPane(sellsPanel);
 
         this.tabPanel.add("Enchères", bidsScroll);
 		this.tabPanel.add("Mes achats", ownedScroll);
-        this.tabPanel.add("Mes ventes", sellsPanel);
+        this.tabPanel.add("Mes ventes", sellsScroll);
         this.tabPanel.addTab("Soummettre un article", submitPanel);
         this.tabPanel.addTab("Me déconnecter", new DisconnectionPanel(client));
 		this.tabPanel.setSelectedIndex(0);

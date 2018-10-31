@@ -5,6 +5,7 @@ import shared.Item;
 
 import javax.swing.*;
 import java.awt.*;
+import java.rmi.RemoteException;
 import java.util.HashMap;
 
 public class SellsPanel extends JPanel {
@@ -12,12 +13,24 @@ public class SellsPanel extends JPanel {
     private IClient client;
     private HashMap<String, JLabel> items;
 
+    private int height = 600;
+
     SellsPanel(IClient client) {
         super();
 
         this.client = client;
         this.items = new HashMap<>();
-        this.setPreferredSize(new Dimension(800,600));
+        this.setPreferredSize(new Dimension(800,height));
+
+        try {
+            for(Item item : client.getItems().values()){
+                if(item.getSeller().equals(client.getPseudo())){
+                    appendNewSoldItem(item);
+                }
+            }
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
     }
 
     public void appendNewSoldItem(Item i){
@@ -50,6 +63,8 @@ public class SellsPanel extends JPanel {
 
         items.put(i.getName(), price);
         this.add(itemPanel);
+        height+=50;
+        this.setPreferredSize(new Dimension(800,height));
     }
 
     public void updateSoldItemWhenSold(Item i){

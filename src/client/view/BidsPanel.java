@@ -26,10 +26,12 @@ public class BidsPanel extends JPanel {
 		itemPanels = new HashMap<>();
 		
 		for (Item i : client.getItems().values()) {
-			items.put(i.getName(), i); // TODO replace by ID
-			ItemPanel itemPanel = new ItemPanel(i, client);
-			this.add(itemPanel);
-			itemPanels.put(i.getName(), itemPanel);
+			if(!i.getSeller().equals(client.getPseudo())) {
+				items.put(i.getName(), i); // TODO replace by ID
+				ItemPanel itemPanel = new ItemPanel(i, client);
+				this.add(itemPanel);
+				itemPanels.put(i.getName(), itemPanel);
+			}
 		}
 		this.setPreferredSize(new Dimension(800, items.size()*150));
 	}
