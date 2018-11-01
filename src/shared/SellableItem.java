@@ -1,11 +1,12 @@
 package shared;
 
 import java.util.Date;
+import java.util.UUID;
 
 public class SellableItem implements Item {
 
 	private static final long serialVersionUID = -4517882019233732317L;
-	private int id;
+	private UUID id;
 	private String name;
 	private String description;
 	private String seller;
@@ -14,7 +15,7 @@ public class SellableItem implements Item {
 	private Date time;
 	private boolean sold;
 	
-	public SellableItem(int id, String name, String description, double price, String seller, long time2leave) {
+	public SellableItem(UUID id, String name, String description, double price, String seller, long time2leave) {
 		this.id = id;
 		this.name = name;
 		this.description = description;
@@ -31,12 +32,12 @@ public class SellableItem implements Item {
 	}
 
 	@Override
-	public int getId() {
+	public UUID getId() {
 		return this.id;
 	}
 	
 	@Override
-	public void setId(int id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 	

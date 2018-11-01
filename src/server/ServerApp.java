@@ -13,17 +13,17 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.HashMap;
+import java.util.UUID;
 
 public class ServerApp extends UnicastRemoteObject implements IServer {
 
 	private static final long serialVersionUID = -8168686161180269490L;
-	private static int CLIENT_ID = 0;
 
 	private static BidMonitor monitor = new BidMonitor();
 
 	private DBManager dbManager;
-	private HashMap<Integer, IClient> clients;
-	private HashMap<Integer,Item> items;
+	private HashMap<UUID, IClient> clients;
+	private HashMap<UUID,Item> items;
 	private ServerLogSystem logSystem;
 
 	ServerApp() throws RemoteException, FileNotFoundException {
@@ -31,19 +31,20 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 		this.dbManager = new DBManager();
 		this.items = this.dbManager.listItems();
 		launchEndSellingThreads();
-		this.clients = new HashMap<Integer, IClient>();
+		this.clients = new HashMap<UUID, IClient>();
 	}
 
 	@Override
-	public int registerClient(IClient client) throws RemoteException {
-		this.clients.put(CLIENT_ID,client);
-		logSystem.writeLog("New client registered : " + client.getPseudo().split("@")[0]+"@"+CLIENT_ID);
+	public void registerClient(IClient client) throws RemoteException {
+		UUID clientID = UUID.randomUUID();
+		client.setID(clientID);
+		this.clients.put(clientID,client);
+		logSystem.writeLog("New client registered : " + client.getPseudo());
 		client.addItemsFromServer(items);
-		return CLIENT_ID++;
 	}
 	
 	@Override
-	public void logout(int clientId) throws RemoteException {
+	public void logout(UUID clientId) throws RemoteException {
 		if(clients.containsKey(clientId)) {
 			logSystem.writeLog(clients.get(clientId).getPseudo() + " logged out.");
 			clients.remove(clientId);
@@ -54,7 +55,7 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 	}
 
 	@Override
-	public void bid(int itemId, double newPrice, int bidderId) throws RemoteException {
+	public void bid(UUID itemId, double newPrice, UUID bidderId) throws RemoteException {
 		double price = monitor.updateBid(itemId, newPrice, clients.get(bidderId).getPseudo(), items, dbManager, logSystem);
 		
 		for (IClient c : clients.values()) {
@@ -76,12 +77,12 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 	}
 	
 	@Override
-	public HashMap<Integer,Item> getItems() {
+	public HashMap<UUID,Item> getItems() {
 		return this.dbManager.listItems();
 	}
 	
 	@Override
-	public HashMap<Integer, IClient> getClients() throws RemoteException {
+	public HashMap<UUID, IClient> getClients() throws RemoteException {
 		return this.clients;
 	}
 	

@@ -34,7 +34,8 @@ public class ItemPanel extends JPanel {
 
         if (!i.isSold()) {
             if (i.getLeader() != null) {
-                price = new JLabel(String.valueOf(i.getPrice()) + " mornilles. Tenu par : " + i.getLeader());
+                String [] splits = i.getLeader().split("-");
+                price = new JLabel(String.valueOf(i.getPrice()) + " mornilles. Tenu par : " + splits[0]);
             } else {
                 price = new JLabel(String.valueOf(i.getPrice()) + " mornilles.");
             }
@@ -119,7 +120,9 @@ public class ItemPanel extends JPanel {
     }
 
     public void setItemPrice(Item i, double newPrice, String buyer){
-        price.setText(String.valueOf(newPrice) + " mornilles. Tenu par : " + buyer);
+        String [] splits = i.getLeader().split("-");
+
+        price.setText(String.valueOf(newPrice) + " mornilles. Tenu par : " + splits[0]);
 
         jta.setText(String.valueOf(Math.ceil((newPrice * 0.2))));
 

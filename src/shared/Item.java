@@ -2,6 +2,7 @@ package shared;
 
 import java.io.Serializable;
 import java.util.Date;
+import java.util.UUID;
 
 public interface Item extends Serializable {
 
@@ -15,12 +16,12 @@ public interface Item extends Serializable {
 	 * Get the ID of the Item
 	 * @return the id
 	 */
-	int getId();
+	UUID getId();
 	
 	/**
 	 * Set ID of the Item (called by the DBManager)
 	 */
-	void setId(int id);
+	void setId(UUID id);
 	
 	/**
 	 * Get the description of the Item.

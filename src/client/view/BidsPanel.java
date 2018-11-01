@@ -9,14 +9,15 @@ import java.awt.*;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.UUID;
 
 public class BidsPanel extends JPanel {
 
 	private static final long serialVersionUID = 341558991057008262L;
 
     private ClientApp client;
-	private Map<String, Item> items;
-	private Map<String, ItemPanel> itemPanels;
+	private Map<UUID, Item> items;
+	private Map<UUID, ItemPanel> itemPanels;
 
 	BidsPanel(ClientApp client) throws RemoteException {
 		super();
@@ -27,10 +28,10 @@ public class BidsPanel extends JPanel {
 		
 		for (Item i : client.getItems().values()) {
 			if(!i.getSeller().equals(client.getPseudo())) {
-				items.put(i.getName(), i); // TODO replace by ID
+				items.put(i.getId(), i);
 				ItemPanel itemPanel = new ItemPanel(i, client);
 				this.add(itemPanel);
-				itemPanels.put(i.getName(), itemPanel);
+				itemPanels.put(i.getId(), itemPanel);
 			}
 		}
 		this.setPreferredSize(new Dimension(800, items.size()*150));
@@ -40,22 +41,22 @@ public class BidsPanel extends JPanel {
 		if (!i.getSeller().equals(client.getPseudo())) {
 			ItemPanel itemPanel = new ItemPanel(i, client);
 			this.add(itemPanel);
-			itemPanels.put(i.getName(), itemPanel);
-			items.put(i.getName(),i);
+			itemPanels.put(i.getId(), itemPanel);
+			items.put(i.getId(),i);
 		}
 	}
 
 	public void updateBid(Item i, double newPrice, String buyer) {
 		try {
 			if(!(i.getSeller().equals(client.getPseudo())))
-                itemPanels.get(i.getName()).setItemPrice(i, newPrice, buyer);
+                itemPanels.get(i.getId()).setItemPrice(i, newPrice, buyer);
 		} catch (RemoteException e) {
 			e.printStackTrace();
 		}
 	}
 
     public void endItemSale(Item item) {
-		if(itemPanels.containsKey(item.getName()))
-        	itemPanels.get(item.getName()).endItemSale(item);
+		if(itemPanels.containsKey(item.getId()))
+        	itemPanels.get(item.getId()).endItemSale(item);
     }
 }

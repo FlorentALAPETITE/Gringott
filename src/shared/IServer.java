@@ -7,6 +7,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public interface IServer extends Remote, Serializable {
 
@@ -15,23 +16,23 @@ public interface IServer extends Remote, Serializable {
 	 * @param client the new client
 	 * @throws RemoteException
 	 */
-	int registerClient(IClient client) throws RemoteException;
+	void registerClient(IClient client) throws RemoteException;
 
 	/**
 	 * Log out a client.
 	 * @param clientId the client to log out.
 	 * @throws RemoteException
 	 */
-	void logout(int clientId) throws RemoteException;
+	void logout(UUID clientId) throws RemoteException;
 	
 	/**
 	 * Record a new bid from a a client for an item.
-	 * @param item the item.
+	 * @param itemId the item.
 	 * @param newPrice the bid amount.
 	 * @param bidderId the client.
 	 * @throws RemoteException
 	 */
-	void bid(int itemId, double newPrice, int bidderId)  throws RemoteException;
+	void bid(UUID itemId, double newPrice, UUID bidderId)  throws RemoteException;
 	
 	/**
 	 * Record a new Item.
@@ -45,14 +46,14 @@ public interface IServer extends Remote, Serializable {
 	 * @return the items.
 	 * @throws RemoteException
 	 */
-	HashMap<Integer,Item> getItems()  throws RemoteException;
+	HashMap<UUID,Item> getItems()  throws RemoteException;
 	
 	/**
 	 * List server's clients
 	 * @return the clients.
 	 * @throws RemoteException
 	 */
-	HashMap<Integer, IClient> getClients() throws RemoteException;
+	HashMap<UUID, IClient> getClients() throws RemoteException;
 	
 	/**
 	 * Get the server's db

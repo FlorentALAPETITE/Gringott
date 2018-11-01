@@ -15,19 +15,20 @@ import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public class ClientApp extends UnicastRemoteObject implements IClient {
 
 	private static final long serialVersionUID = 1373624286313090112L;
-	private int id;
+	private UUID id;
 	private boolean isConnected = false;
 	private ClientFrame view;
 	private String pseudo;
-	private HashMap<Integer,Item> items;
+	private HashMap<UUID,Item> items;
 	private IServer server;
 
 	public ClientApp(String url) throws MalformedURLException, RemoteException, NotBoundException {
-		this.items = new HashMap<Integer,Item>();
+		this.items = new HashMap<UUID,Item>();
 		this.view = new ClientFrame(this);
 		this.view.setVisible(true);
 		try{
@@ -73,7 +74,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
     public void connect(String validPseudo){
         try {
             pseudo = validPseudo;
-            id = server.registerClient(this);
+            server.registerClient(this);
             isConnected = true;
             view.openTabPanel();
             updateView();
@@ -115,13 +116,13 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
     //region getter / setters
 
     @Override
-    public int getId() throws RemoteException {
+    public UUID getId() throws RemoteException {
         return this.id;
     }
 
     @Override
     public String getPseudo() throws RemoteException {
-        return this.pseudo+"@"+this.id;
+        return this.pseudo+"@"+this.id.toString();
     }
 
     @Override
@@ -130,8 +131,8 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
     }
 
     @Override
-    public void addItemsFromServer(HashMap<Integer, Item> items){
-	    this.items = new HashMap<Integer, Item>(items);
+    public void addItemsFromServer(HashMap<UUID, Item> items){
+	    this.items = new HashMap<UUID, Item>(items);
     }
 
     @Override
@@ -153,7 +154,7 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 	}
 
 	@Override
-	public HashMap<Integer,Item> getItems() throws RemoteException {
+	public HashMap<UUID,Item> getItems() throws RemoteException {
 		return this.items;
 	}
 
@@ -161,6 +162,11 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 	public void setPseudo(String pseudo) throws RemoteException {
 		this.pseudo = pseudo;
 	}
+
+	@Override
+    public void setID(UUID clientID) throws RemoteException{
+	    this.id = clientID;
+    }
 
     //endregion
 

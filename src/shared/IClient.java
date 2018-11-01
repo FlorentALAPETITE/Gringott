@@ -4,6 +4,7 @@ import java.rmi.Remote;
 import java.rmi.RemoteException;
 import java.util.HashMap;
 import java.util.List;
+import java.util.UUID;
 
 public interface IClient extends Remote {
 
@@ -11,7 +12,7 @@ public interface IClient extends Remote {
 	 * Returns the client ID
 	 * @return integer id
 	 */
-	int getId() throws RemoteException;
+	UUID getId() throws RemoteException;
 	
 	/**
 	 * Returns the connection status of the client
@@ -25,7 +26,7 @@ public interface IClient extends Remote {
 	 */
 	void addNewItem(Item item) throws RemoteException;
 
-	void addItemsFromServer(HashMap<Integer, Item> items) throws RemoteException;
+	void addItemsFromServer(HashMap<UUID, Item> items) throws RemoteException;
 	
 	/**
 	 * Update an item (after a bid from another buyer).
@@ -49,7 +50,7 @@ public interface IClient extends Remote {
 	/**
 	 * Get client's items.
 	 */
-	HashMap<Integer,Item> getItems() throws RemoteException;
+	HashMap<UUID,Item> getItems() throws RemoteException;
 
 	/**
 	 * Get client's server.
@@ -61,5 +62,7 @@ public interface IClient extends Remote {
 	 * @param pseudo the new pseudo
 	 */
 	void setPseudo(String pseudo) throws RemoteException;
+
+	void setID(UUID clientID) throws RemoteException;
 	
 }

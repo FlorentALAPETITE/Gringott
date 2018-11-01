@@ -97,7 +97,7 @@ public class SubmitPanel extends JPanel {
 	}
 
 	public Item getFieldsContent() throws NumberFormatException, RemoteException{
-		return new SellableItem(-1, txtItemName.getText(), txtItemDescription.getText(), Double.parseDouble(txtItemPrice.getText()), client.getPseudo(), Long.parseLong(txtItemTime.getText()));
+		return new SellableItem(null, txtItemName.getText(), txtItemDescription.getText(), Double.parseDouble(txtItemPrice.getText()), client.getPseudo(), Long.parseLong(txtItemTime.getText()));
 	}
 
 	public void clear() {
