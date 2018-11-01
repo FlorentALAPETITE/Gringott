@@ -40,17 +40,6 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
 
 	}
 
-
-    //region display
-
-    private void updateView() throws RemoteException {
-        this.view.rebuild();
-        this.view.repaint();
-        this.view.revalidate();
-    }
-
-    //endregion
-
     //region client
 
 	@Override
@@ -77,7 +66,12 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
             server.registerClient(this);
             isConnected = true;
             view.openTabPanel();
-            updateView();
+            
+            //Display
+            this.view.rebuild();
+            this.view.repaint();
+            this.view.revalidate();
+            
         } catch (RemoteException e1) {
             e1.printStackTrace();
         }
