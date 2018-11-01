@@ -86,7 +86,9 @@ public class DBManager {
     }
 
 	public void updateItem(Item i) {
-        registeredItems.remove(i.getId() + "");
+	    synchronized (this) {
+            registeredItems.remove(i.getId() + "");
+        }
 		this.writeItem(i);
 	}
 
@@ -99,7 +101,7 @@ public class DBManager {
                 i = gson.fromJson(item.getValue(), SellableItem.class);
 
                 // Update database history
-				if (i.getTime().getTime() <= new Date(System.currentTimeMillis()).getTime()) {
+				if (i.getTime().getTime() <= new Date(System.currentTimeMillis()).getTime() && !i.isSold()) {
 					i.setSold(true);
 					modifiedItems.add(i);
 				}
