@@ -130,6 +130,11 @@ public class ClientApp extends UnicastRemoteObject implements IClient {
     }
 
     @Override
+    public void addItemsFromServer(HashMap<Integer, Item> items){
+	    this.items = new HashMap<Integer, Item>(items);
+    }
+
+    @Override
     public void addNewItem(Item item) throws RemoteException {
         if(!items.containsKey(item.getId())) {
         	System.out.println("Nouvel item ajouté : " + item.getName());

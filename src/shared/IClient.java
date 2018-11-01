@@ -24,6 +24,8 @@ public interface IClient extends Remote {
 	 * @param item the item to be sold.
 	 */
 	void addNewItem(Item item) throws RemoteException;
+
+	void addItemsFromServer(HashMap<Integer, Item> items) throws RemoteException;
 	
 	/**
 	 * Update an item (after a bid from another buyer).

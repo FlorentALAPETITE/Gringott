@@ -37,10 +37,8 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 	@Override
 	public int registerClient(IClient client) throws RemoteException {
 		this.clients.put(CLIENT_ID,client);
-		logSystem.writeLog("New client registered : " + client.getPseudo().split("@")[0]+"@"+CLIENT_ID); //Oui, c'est très laid, mais sinon l'id n'est pas encore initialisé pour le client, l'idéal serait d'afficher le message après
-		for (Item i : items.values()) {
-			client.addNewItem(i);
-		}
+		logSystem.writeLog("New client registered : " + client.getPseudo().split("@")[0]+"@"+CLIENT_ID);
+		client.addItemsFromServer(items);
 		return CLIENT_ID++;
 	}
 	
@@ -69,7 +67,7 @@ public class ServerApp extends UnicastRemoteObject implements IServer {
 		Item storedItem = dbManager.addItem(item);
 		this.items.put(storedItem.getId(),storedItem);
 		logSystem.writeLog("New item registered : " + storedItem);
-		
+
 		for (IClient c : clients.values()) {
 			c.addNewItem(storedItem);
 		}

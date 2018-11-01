@@ -86,9 +86,6 @@ public class DBManager {
     }
 
 	public void updateItem(Item i) {
-	    synchronized (this) {
-            registeredItems.remove(i.getId() + "");
-        }
 		this.writeItem(i);
 	}
 
